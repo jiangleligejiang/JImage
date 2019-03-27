@@ -19,6 +19,8 @@
 		A1A210412248D6C300A39089 /* JImageDownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = A1A210402248D6C300A39089 /* JImageDownloader.m */; };
 		A1A210452248DBE200A39089 /* MBProgressHUD+JUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = A1A210442248DBE200A39089 /* MBProgressHUD+JUtils.m */; };
 		A1A210492248F6DE00A39089 /* JImageCacheManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A1A210482248F6DE00A39089 /* JImageCacheManager.m */; };
+		A1E5CBE4224B1C4900A1789C /* JImageCoder.m in Sources */ = {isa = PBXBuildFile; fileRef = A1E5CBE3224B1C4900A1789C /* JImageCoder.m */; };
+		A1E5CBE7224B216300A1789C /* UIImage+JImageFormat.m in Sources */ = {isa = PBXBuildFile; fileRef = A1E5CBE6224B216300A1789C /* UIImage+JImageFormat.m */; };
 		B8F656C21D55436BFBDA3948 /* libPods-JImage.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F2EB14F5382A1B03A0CC9534 /* libPods-JImage.a */; };
 		C5828985A8ED5F0DABAD1C47 /* libPods-JImageTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 42A58C72FAF495C8507E8AE0 /* libPods-JImageTests.a */; };
 /* End PBXBuildFile section */
@@ -70,6 +72,10 @@
 		A1A210472248F6DE00A39089 /* JImageCacheManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JImageCacheManager.h; sourceTree = "<group>"; };
 		A1A210482248F6DE00A39089 /* JImageCacheManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JImageCacheManager.m; sourceTree = "<group>"; };
 		A1C844BBA46089B45D986778 /* libPods-JImageUITests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-JImageUITests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A1E5CBE2224B1C4900A1789C /* JImageCoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JImageCoder.h; sourceTree = "<group>"; };
+		A1E5CBE3224B1C4900A1789C /* JImageCoder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JImageCoder.m; sourceTree = "<group>"; };
+		A1E5CBE5224B216300A1789C /* UIImage+JImageFormat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIImage+JImageFormat.h"; sourceTree = "<group>"; };
+		A1E5CBE6224B216300A1789C /* UIImage+JImageFormat.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIImage+JImageFormat.m"; sourceTree = "<group>"; };
 		F2EB14F5382A1B03A0CC9534 /* libPods-JImage.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-JImage.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FEBE03DE9B56E505FE3B9B8A /* Pods-JImageTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-JImageTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-JImageTests/Pods-JImageTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -177,6 +183,10 @@
 				A1A210402248D6C300A39089 /* JImageDownloader.m */,
 				A1A210472248F6DE00A39089 /* JImageCacheManager.h */,
 				A1A210482248F6DE00A39089 /* JImageCacheManager.m */,
+				A1E5CBE2224B1C4900A1789C /* JImageCoder.h */,
+				A1E5CBE3224B1C4900A1789C /* JImageCoder.m */,
+				A1E5CBE5224B216300A1789C /* UIImage+JImageFormat.h */,
+				A1E5CBE6224B216300A1789C /* UIImage+JImageFormat.m */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -396,6 +406,8 @@
 				A11444B32244C51700A9DFD7 /* ViewController.m in Sources */,
 				A1A210412248D6C300A39089 /* JImageDownloader.m in Sources */,
 				A1A210452248DBE200A39089 /* MBProgressHUD+JUtils.m in Sources */,
+				A1E5CBE7224B216300A1789C /* UIImage+JImageFormat.m in Sources */,
+				A1E5CBE4224B1C4900A1789C /* JImageCoder.m in Sources */,
 				A1A210492248F6DE00A39089 /* JImageCacheManager.m in Sources */,
 				A11444BE2244C51900A9DFD7 /* main.m in Sources */,
 				A11444B02244C51700A9DFD7 /* AppDelegate.m in Sources */,

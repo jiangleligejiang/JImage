@@ -1,32 +1,49 @@
 PODS:
+  - FLAnimatedImage (1.0.12)
   - Masonry (1.1.0)
   - MBProgressHUD (1.1.0)
   - SDWebImage (4.4.6):
     - SDWebImage/Core (= 4.4.6)
   - SDWebImage/Core (4.4.6)
+  - SDWebImage/GIF (4.4.6):
+    - FLAnimatedImage (~> 1.0)
+    - SDWebImage/Core
+  - YYCache (1.0.4)
   - YYImage (1.0.4):
     - YYImage/Core (= 1.0.4)
   - YYImage/Core (1.0.4)
+  - YYWebImage (1.0.5):
+    - YYCache
+    - YYImage
 
 DEPENDENCIES:
+  - FLAnimatedImage
   - Masonry
   - MBProgressHUD
   - SDWebImage
+  - SDWebImage/GIF
   - YYImage
+  - YYWebImage
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
+    - FLAnimatedImage
     - Masonry
     - MBProgressHUD
     - SDWebImage
+    - YYCache
     - YYImage
+    - YYWebImage
 
 SPEC CHECKSUMS:
+  FLAnimatedImage: 4a0b56255d9b05f18b6dd7ee06871be5d3b89e31
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
   MBProgressHUD: e7baa36a220447d8aeb12769bf0585582f3866d9
   SDWebImage: 3f3f0c02f09798048c47a5ed0a13f17b063572d8
+  YYCache: 8105b6638f5e849296c71f331ff83891a4942952
   YYImage: 1e1b62a9997399593e4b9c4ecfbbabbf1d3f3b54
+  YYWebImage: 5f7f36aee2ae293f016d418c7d6ba05c4863e928
 
-PODFILE CHECKSUM: a2d62fff9fa7a0015a6026253cbaac7f21f8b3f6
+PODFILE CHECKSUM: 66c2bb53b1145a1a8c5436dc293a18555e44b394
 
 COCOAPODS: 1.5.3

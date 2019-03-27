@@ -22,7 +22,9 @@ typedef NS_ENUM(NSUInteger, JImageCacheType) {
 
 - (void)queryImageCacheForKey:(NSString *)key completionBlock:(void(^)(UIImage *_Nullable image, JImageCacheType cacheType))completionBlock;
 
-- (void)storeImage:(UIImage *_Nullable)image forKey:(NSString *)key;
+- (void)storeToMemoryWithImage:(UIImage *_Nullable)image forKey:(NSString *)key;
+
+- (void)storeToDiskWithData:(NSData *_Nullable)data forKey:(NSString *)key;
 
 - (void)clearMemoryCache;
 

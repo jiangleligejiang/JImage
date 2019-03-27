@@ -11,11 +11,14 @@
 #import "JImageDownloader.h"
 #import "JImageCacheManager.h"
 #import "MBProgressHUD+JUtils.h"
+#import "UIImage+JImageFormat.h"
+#import "YYWebImage.h"
+#import "FLAnimatedImageView+WebCache.h"
 @interface ViewController ()
 @property (nonatomic, strong) UIImageView *imageView;
+@property (nonatomic, strong) YYAnimatedImageView *yyImageView;
+@property (nonatomic, strong) FLAnimatedImageView *sdImageView;
 @end
-
-
 @implementation ViewController
 
 - (void)viewDidLoad {
@@ -24,8 +27,16 @@
     self.imageView.backgroundColor = [UIColor lightGrayColor];
     [self.view addSubview:self.imageView];
     
+    self.yyImageView = [[YYAnimatedImageView alloc] init];
+    self.yyImageView.backgroundColor = [UIColor lightGrayColor];
+    [self.view addSubview:self.yyImageView];
+    
+    self.sdImageView = [[FLAnimatedImageView alloc] init];
+    self.sdImageView.backgroundColor = [UIColor lightGrayColor];
+    [self.view addSubview:self.sdImageView];
+    
     UIButton *downloadBtn = [UIButton buttonWithType:UIButtonTypeSystem];
-    [downloadBtn setTitle:@"download" forState:UIControlStateNormal];
+    [downloadBtn setTitle:@"Custom Load" forState:UIControlStateNormal];
     [downloadBtn addTarget:self action:@selector(downloadImage) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:downloadBtn];
     
@@ -44,9 +55,32 @@
     [clearDiskCacheBtn addTarget:self action:@selector(clearDiskCache) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:clearDiskCacheBtn];
     
+    UIButton *yyBtn = [UIButton buttonWithType:UIButtonTypeSystem];
+    [yyBtn setTitle:@"YYImage Load" forState:UIControlStateNormal];
+    [yyBtn addTarget:self action:@selector(yy_load) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:yyBtn];
+    
+    UIButton *sdBtn = [UIButton buttonWithType:UIButtonTypeSystem];
+    [sdBtn setTitle:@"SDWebImage Load" forState:UIControlStateNormal];
+    [sdBtn addTarget:self action:@selector(sd_load) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:sdBtn];
+    
     __weak typeof (self) weakSelf = self;
+    [self.yyImageView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerX.mas_equalTo(weakSelf.view.mas_centerX);
+        make.top.mas_equalTo(weakSelf.view).offset(80);
+        make.size.mas_equalTo(CGSizeMake(100, 100));
+    }];
+    
+    [self.sdImageView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerX.mas_equalTo(weakSelf.view.mas_centerX);
+        make.top.mas_equalTo(weakSelf.yyImageView.mas_bottom).offset(20);
+        make.size.mas_equalTo(CGSizeMake(100, 100));
+    }];
+    
     [self.imageView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.center.mas_equalTo(weakSelf.view);
+        make.centerX.mas_equalTo(weakSelf.view.mas_centerX);
+        make.top.mas_equalTo(weakSelf.sdImageView.mas_bottom).offset(20);
         make.size.mas_equalTo(CGSizeMake(100, 100));
     }];
     [downloadBtn mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -54,32 +88,50 @@
         make.centerX.mas_equalTo(weakSelf.view.mas_centerX);
     }];
     [resetBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(downloadBtn.mas_bottom).offset(20);
+        make.top.mas_equalTo(downloadBtn.mas_bottom).offset(10);
         make.centerX.mas_equalTo(weakSelf.view.mas_centerX);
     }];
     [clearMemCacheBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(resetBtn.mas_bottom).offset(20);
+        make.top.mas_equalTo(resetBtn.mas_bottom).offset(10);
         make.centerX.mas_equalTo(weakSelf.view.mas_centerX);
     }];
     [clearDiskCacheBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(clearMemCacheBtn.mas_bottom).offset(20);
+        make.top.mas_equalTo(clearMemCacheBtn.mas_bottom).offset(10);
         make.centerX.mas_equalTo(weakSelf.view.mas_centerX);
     }];
-    
+    [yyBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.mas_equalTo(clearDiskCacheBtn.mas_bottom).offset(10);
+        make.centerX.mas_equalTo(weakSelf.view.mas_centerX);
+    }];
+    [sdBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.mas_equalTo(yyBtn.mas_bottom).offset(10);
+        make.centerX.mas_equalTo(weakSelf.view.mas_centerX);
+    }];
 }
 
+
+static NSString *gifUrl = @"https://user-gold-cdn.xitu.io/2019/3/27/169bce612ee4dc21";
+
 - (void)downloadImage {
-    NSString *imageUrl = @"https://user-gold-cdn.xitu.io/2019/3/25/169b406dfc5fe46e";
+    //NSString *imageUrl = @"https://user-gold-cdn.xitu.io/2019/3/25/169b406dfc5fe46e";
     __weak typeof(self) weakSelf = self;
-    [[JImageDownloader shareInstance] fetchImageWithURL:imageUrl completion:^(UIImage * _Nullable image, NSError * _Nullable error) {
+    [[JImageDownloader shareInstance] fetchImageWithURL:gifUrl completion:^(UIImage * _Nullable image, NSError * _Nullable error) {
         __strong typeof (weakSelf) strongSelf = weakSelf;
         if (strongSelf && image) {
-            strongSelf.imageView.image = image;
+            if (image.imageFormat == JImageFormatGIF) {
+                strongSelf.imageView.animationImages = image.images;
+                //strongSelf.imageView.animationRepeatCount = image.loopCount;
+                //strongSelf.imageView.animationDuration = image.duration;
+                [strongSelf.imageView startAnimating];
+            }
         }
     }];
 }
 
 - (void)resetImage {
+    if (self.imageView.isAnimating) {
+        [self.imageView stopAnimating];
+    }
     self.imageView.image = nil;
 }
 
@@ -89,6 +141,14 @@
 
 - (void)clearDiskCache {
     [[JImageCacheManager shareManager] clearDiskCache];
+}
+
+- (void)yy_load {
+    [self.yyImageView yy_setImageWithURL:[NSURL URLWithString:gifUrl] options:YYWebImageOptionProgressive];
+}
+
+- (void)sd_load {
+    [self.sdImageView sd_setImageWithURL:[NSURL URLWithString:gifUrl]];
 }
 
 @end

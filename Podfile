@@ -6,9 +6,12 @@ target 'JImage' do
   # use_frameworks!
 
   # Pods for JImage
-  pod 'YYImage'  
+  pod 'YYImage'
+  pod 'YYWebImage'
   pod 'Masonry'
   pod 'SDWebImage'
+  pod 'SDWebImage/GIF'
+  pod 'FLAnimatedImage'
   pod 'MBProgressHUD'
   target 'JImageTests' do
     inherit! :search_paths

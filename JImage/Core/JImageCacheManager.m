@@ -8,6 +8,7 @@
 
 #import "JImageCacheManager.h"
 #import <CommonCrypto/CommonDigest.h>
+#import "JImageCoder.h"
 
 @interface JImageCacheManager ()
 @property (nonatomic, strong) NSCache *imageMemoryCache;
@@ -55,7 +56,7 @@
         UIImage *diskCache = nil;
         JImageCacheType cacheType = JImageCacheTypeNone;
         if (data) {
-            diskCache = [UIImage imageWithData:data];
+            diskCache = [[JImageCoder shareCoder] decodeImageWithData:data];
             if (diskCache) {
                 cacheType = JImageCacheTypeDisk;
                 [self.imageMemoryCache setObject:diskCache forKey:key];
@@ -69,31 +70,25 @@
     dispatch_async(self.ioQueue, queryDiskBlock);//加入到队列中异步处理
 }
 
-- (void)storeImage:(UIImage *)image forKey:(NSString *)key {
+- (void)storeToMemoryWithImage:(UIImage *)image forKey:(NSString *)key {
     if (!image || !key || key.length == 0) {
         return;
     }
-    
     [self.imageMemoryCache setObject:image forKey:key];
+}
+
+- (void)storeToDiskWithData:(NSData *)data forKey:(NSString *)key {
+    if (!data || !key || key.length == 0) {
+        return;
+    }
     
     void(^storeDiskBlock)(void) = ^ {
-        NSData *data = nil;
-        if ([self containsAlphaWithCGImage:image.CGImage]) {
-            data = UIImagePNGRepresentation(image);
-        } else {
-            data = UIImageJPEGRepresentation(image, 1.0);
-        }
-        
-        if (!data) {
-            return;
-        }
-        
         if (![self.fileManager fileExistsAtPath:self.diskCachePath]) {
             [self.fileManager createDirectoryAtPath:self.diskCachePath withIntermediateDirectories:YES attributes:nil error:nil];
         }
-        NSString *cachePath = [self.diskCachePath stringByAppendingPathComponent:[self cachedFileNameForKey:key]];
-        NSURL *fileURL = [NSURL fileURLWithPath:cachePath];
-        [data writeToURL:fileURL atomically:YES];
+        NSString *filePath = [self.diskCachePath stringByAppendingPathComponent:[self cachedFileNameForKey:key]];
+        NSURL *fileUrl = [NSURL fileURLWithPath:filePath];
+        [data writeToURL:fileUrl atomically:YES];
     };
     dispatch_async(self.ioQueue, storeDiskBlock);
 }

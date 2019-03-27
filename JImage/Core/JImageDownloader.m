@@ -8,6 +8,7 @@
 
 #import "JImageDownloader.h"
 #import "JImageCacheManager.h"
+#import "JImageCoder.h"
 
 @interface JImageDownloader()
 @property (nonatomic, strong) NSURLSession *session;
@@ -49,9 +50,10 @@
         NSURLSessionDataTask *dataTask = [self.session dataTaskWithURL:URL completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
             UIImage *image = nil;
             if (!error && data) {
-                image = [UIImage imageWithData:data];
+                [[JImageCacheManager shareManager] storeToDiskWithData:data forKey:url];
+                image = [[JImageCoder shareCoder] decodeImageWithData:data];
                 if (image) {
-                    [[JImageCacheManager shareManager] storeImage:image forKey:url];
+                    [[JImageCacheManager shareManager] storeToMemoryWithImage:image forKey:url];
                 }
             }
             if (error) {
