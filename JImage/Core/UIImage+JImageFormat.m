@@ -23,30 +23,6 @@
     return nil;
 }
 
-- (void)setDuration:(NSTimeInterval)duration {
-    objc_setAssociatedObject(self, @selector(duration), @(duration), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
-
-- (NSTimeInterval)duration {
-    NSNumber *value = objc_getAssociatedObject(self, @selector(duration));
-    if ([value isKindOfClass:[NSNumber class]]) {
-        return value.floatValue;
-    }
-    return -1;
-}
-
-- (void)setLoopCount:(NSInteger)loopCount {
-    objc_setAssociatedObject(self, @selector(loopCount), @(loopCount), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-}
-
-- (NSInteger)loopCount {
-    NSNumber *value = objc_getAssociatedObject(self, @selector(loopCount));
-    if ([value isKindOfClass:[NSNumber class]]) {
-        return value.integerValue;
-    }
-    return -1;
-}
-
 - (void)setImageFormat:(JImageFormat)imageFormat {
     objc_setAssociatedObject(self, @selector(imageFormat), @(imageFormat), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }

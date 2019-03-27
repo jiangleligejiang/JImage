@@ -47,54 +47,19 @@
         animatedImage = [[UIImage alloc] initWithData:data];
         animatedImage.imageFormat = JImageFormatGIF;
     } else {
-        NSInteger loopCount = 0;
-        //获取GIF中的循环次数
-        CFDictionaryRef properties = CGImageSourceCopyProperties(source, NULL);
-        if (properties) {
-            CFDictionaryRef gif = CFDictionaryGetValue(properties, kCGImagePropertyGIFDictionary);
-            if (gif) {
-                CFTypeRef loop = CFDictionaryGetValue(gif, kCGImagePropertyGIFLoopCount);
-                if (loop) CFNumberGetValue(loop, kCFNumberNSIntegerType, &loopCount);
-            }
-            CFRelease(properties);
-        }
-        
-        NSTimeInterval duration = 0;
         NSMutableArray<UIImage *> *imageArray = [NSMutableArray array];
         for (size_t i = 0; i < count; i ++) {
             CGImageRef imageRef = CGImageSourceCreateImageAtIndex(source, i, NULL);
             if (!imageRef) {
                 continue;
             }
-            
-            CFDictionaryRef properties = CGImageSourceCopyPropertiesAtIndex(source, i, NULL);
-            if (properties) {
-                NSTimeInterval currentDuration = 0;
-                CFDictionaryRef gif = CFDictionaryGetValue(properties, kCGImagePropertyGIFDictionary);
-                if (gif) {
-                    CFTypeRef value = NULL;
-                    value = CFDictionaryGetValue(gif, kCGImagePropertyGIFUnclampedDelayTime);
-                    if (!value) {
-                        value = CFDictionaryGetValue(gif, kCGImagePropertyGIFDelayTime);
-                    }
-                    if (value) {
-                        CFNumberGetValue(value, kCFNumberDoubleType, &currentDuration);
-                        duration += currentDuration;
-                    }
-                }
-                CFRelease(properties);
-            }
-            
             UIImage *image = [[UIImage alloc] initWithCGImage:imageRef];
             [imageArray addObject:image];
-            
             CGImageRelease(imageRef);
         }
         
         animatedImage = [[UIImage alloc] init];
         animatedImage.imageFormat = JImageFormatGIF;
-        animatedImage.loopCount = loopCount;
-        animatedImage.duration = duration;
         animatedImage.images = [imageArray copy];
     }
     

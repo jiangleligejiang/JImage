@@ -21,10 +21,6 @@ typedef NS_ENUM(NSInteger, JImageFormat) {
 
 @property (nonatomic, assign) JImageFormat imageFormat;
 
-@property (nonatomic, assign) NSInteger loopCount;
-
-@property (nonatomic, assign) NSTimeInterval duration;
-
 @property (nonatomic, copy) NSArray *images;
 
 @end

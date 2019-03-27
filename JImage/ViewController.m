@@ -35,6 +35,13 @@
     self.sdImageView.backgroundColor = [UIColor lightGrayColor];
     [self.view addSubview:self.sdImageView];
     
+    UILabel *yyLabel = [self labelWithTitle:@"YY Image"];
+    [self.view addSubview:yyLabel];
+    UILabel *sdLabel = [self labelWithTitle:@"SDWebImage"];
+    [self.view addSubview:sdLabel];
+    UILabel *customLabel = [self labelWithTitle:@"Custom Image"];
+    [self.view addSubview:customLabel];
+    
     UIButton *downloadBtn = [UIButton buttonWithType:UIButtonTypeSystem];
     [downloadBtn setTitle:@"Custom Load" forState:UIControlStateNormal];
     [downloadBtn addTarget:self action:@selector(downloadImage) forControlEvents:UIControlEventTouchUpInside];
@@ -83,8 +90,30 @@
         make.top.mas_equalTo(weakSelf.sdImageView.mas_bottom).offset(20);
         make.size.mas_equalTo(CGSizeMake(100, 100));
     }];
+    
+    [yyLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerY.mas_equalTo(weakSelf.yyImageView.mas_centerY);
+        make.left.mas_equalTo(weakSelf.yyImageView.mas_right).offset(20);
+    }];
+    [sdLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerY.mas_equalTo(weakSelf.sdImageView.mas_centerY);
+        make.left.mas_equalTo(weakSelf.sdImageView.mas_right).offset(20);
+    }];
+    [customLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerY.mas_equalTo(weakSelf.imageView.mas_centerY);
+        make.left.mas_equalTo(weakSelf.imageView.mas_right).offset(20);
+    }];
+    
+    [yyBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.mas_equalTo(weakSelf.imageView.mas_bottom).offset(20);
+        make.centerX.mas_equalTo(weakSelf.view.mas_centerX);
+    }];
+    [sdBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.mas_equalTo(yyBtn.mas_bottom).offset(10);
+        make.centerX.mas_equalTo(weakSelf.view.mas_centerX);
+    }];
     [downloadBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(weakSelf.imageView.mas_bottom).offset(50);
+        make.top.mas_equalTo(sdBtn.mas_bottom).offset(10);
         make.centerX.mas_equalTo(weakSelf.view.mas_centerX);
     }];
     [resetBtn mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -99,19 +128,18 @@
         make.top.mas_equalTo(clearMemCacheBtn.mas_bottom).offset(10);
         make.centerX.mas_equalTo(weakSelf.view.mas_centerX);
     }];
-    [yyBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(clearDiskCacheBtn.mas_bottom).offset(10);
-        make.centerX.mas_equalTo(weakSelf.view.mas_centerX);
-    }];
-    [sdBtn mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.mas_equalTo(yyBtn.mas_bottom).offset(10);
-        make.centerX.mas_equalTo(weakSelf.view.mas_centerX);
-    }];
+}
+
+- (UILabel *)labelWithTitle:(NSString *)title {
+    UILabel *label = [UILabel new];
+    label.textColor = [UIColor blackColor];
+    label.font = [UIFont systemFontOfSize:14];
+    label.text = title;
+    return label;
 }
 
 
 static NSString *gifUrl = @"https://user-gold-cdn.xitu.io/2019/3/27/169bce612ee4dc21";
-
 - (void)downloadImage {
     //NSString *imageUrl = @"https://user-gold-cdn.xitu.io/2019/3/25/169b406dfc5fe46e";
     __weak typeof(self) weakSelf = self;
@@ -120,8 +148,6 @@ static NSString *gifUrl = @"https://user-gold-cdn.xitu.io/2019/3/27/169bce612ee4
         if (strongSelf && image) {
             if (image.imageFormat == JImageFormatGIF) {
                 strongSelf.imageView.animationImages = image.images;
-                //strongSelf.imageView.animationRepeatCount = image.loopCount;
-                //strongSelf.imageView.animationDuration = image.duration;
                 [strongSelf.imageView startAnimating];
             }
         }
@@ -133,6 +159,16 @@ static NSString *gifUrl = @"https://user-gold-cdn.xitu.io/2019/3/27/169bce612ee4
         [self.imageView stopAnimating];
     }
     self.imageView.image = nil;
+    
+    if (self.yyImageView.isAnimating) {
+        [self.yyImageView stopAnimating];
+    }
+    self.yyImageView.image = nil;
+    
+    if (self.sdImageView.isAnimating) {
+        [self.sdImageView stopAnimating];
+    }
+    self.sdImageView.image = nil;
 }
 
 - (void)clearMemCache {
@@ -150,5 +186,6 @@ static NSString *gifUrl = @"https://user-gold-cdn.xitu.io/2019/3/27/169bce612ee4
 - (void)sd_load {
     [self.sdImageView sd_setImageWithURL:[NSURL URLWithString:gifUrl]];
 }
+
 
 @end
