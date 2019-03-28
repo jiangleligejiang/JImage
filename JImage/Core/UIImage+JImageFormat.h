@@ -16,13 +16,12 @@ typedef NS_ENUM(NSInteger, JImageFormat) {
     JImageFormatPNG = 1,
     JImageFormatGIF = 2
 };
-
-@interface UIImage (JImageFormat) 
-
+@interface UIImage (JImageFormat)
 @property (nonatomic, assign) JImageFormat imageFormat;
-
 @property (nonatomic, copy) NSArray *images;
-
+@property (nonatomic, assign) NSInteger loopCount;
+@property (nonatomic, copy) NSArray *delayTimes;
+@property (nonatomic, assign) NSTimeInterval totalTimes;
 @end
 
 NS_ASSUME_NONNULL_END

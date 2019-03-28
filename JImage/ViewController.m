@@ -148,7 +148,11 @@ static NSString *gifUrl = @"https://user-gold-cdn.xitu.io/2019/3/27/169bce612ee4
         if (strongSelf && image) {
             if (image.imageFormat == JImageFormatGIF) {
                 strongSelf.imageView.animationImages = image.images;
+                strongSelf.imageView.animationDuration = image.totalTimes;
+                strongSelf.imageView.animationRepeatCount = image.loopCount;
                 [strongSelf.imageView startAnimating];
+            } else {
+                strongSelf.imageView.image = image;
             }
         }
     }];
