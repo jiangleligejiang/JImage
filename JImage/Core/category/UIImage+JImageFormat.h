@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "UIImage+JImageGIF.h"
 NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSInteger, JImageFormat) {
@@ -17,11 +17,11 @@ typedef NS_ENUM(NSInteger, JImageFormat) {
     JImageFormatGIF = 2
 };
 @interface UIImage (JImageFormat)
+
 @property (nonatomic, assign) JImageFormat imageFormat;
-@property (nonatomic, copy) NSArray *images;
-@property (nonatomic, assign) NSInteger loopCount;
-@property (nonatomic, copy) NSArray *delayTimes;
-@property (nonatomic, assign) NSTimeInterval totalTimes;
+@property (nonatomic, assign) NSUInteger memoryCost;
+
+- (UIImage *)normalizedImage;
 @end
 
 NS_ASSUME_NONNULL_END

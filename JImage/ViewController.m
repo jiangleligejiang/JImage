@@ -9,7 +9,7 @@
 #import "ViewController.h"
 #import "Masonry.h"
 #import "JImageDownloader.h"
-#import "JImageCacheManager.h"
+#import "JImageManager.h"
 #import "MBProgressHUD+JUtils.h"
 #import "UIImage+JImageFormat.h"
 #import "YYWebImage.h"
@@ -143,7 +143,7 @@ static NSString *gifUrl = @"https://user-gold-cdn.xitu.io/2019/3/27/169bce612ee4
 - (void)downloadImage {
     //NSString *imageUrl = @"https://user-gold-cdn.xitu.io/2019/3/25/169b406dfc5fe46e";
     __weak typeof(self) weakSelf = self;
-    [[JImageDownloader shareInstance] fetchImageWithURL:gifUrl completion:^(UIImage * _Nullable image, NSError * _Nullable error) {
+    [[JImageManager shareManager] loadImageWithUrl:gifUrl complection:^(UIImage * _Nullable image, NSError * _Nullable error) {
         __strong typeof (weakSelf) strongSelf = weakSelf;
         if (strongSelf && image) {
             if (image.imageFormat == JImageFormatGIF) {
@@ -176,11 +176,11 @@ static NSString *gifUrl = @"https://user-gold-cdn.xitu.io/2019/3/27/169bce612ee4
 }
 
 - (void)clearMemCache {
-    [[JImageCacheManager shareManager] clearMemoryCache];
+    [[JImageManager shareManager] clearMemoryCache];
 }
 
 - (void)clearDiskCache {
-    [[JImageCacheManager shareManager] clearDiskCache];
+    [[JImageManager shareManager] clearDiskCache];
 }
 
 - (void)yy_load {

@@ -16,7 +16,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (instancetype)shareCoder;
 
-- (UIImage *)decodeImageWithData:(NSData *)data;
+- (nullable UIImage *)decodeImageWithData:(nullable NSData *)data;
+
+- (nullable NSData *)encodedDataWithImage:(nullable UIImage *)image;
 
 @end
 
