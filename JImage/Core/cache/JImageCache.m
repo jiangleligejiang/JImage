@@ -18,8 +18,6 @@
 
 @interface JImageCache()
 @property (nonatomic, strong) dispatch_queue_t ioQueue;
-@property (nonatomic, strong, readwrite) JMemoryCache *memoryCache;
-@property (nonatomic, strong, readwrite) JDiskCache *diskCache;
 @end
 
 @implementation JImageCache

@@ -23,8 +23,8 @@ typedef NSCache JMemoryCache;
 NS_ASSUME_NONNULL_BEGIN
 @interface JImageCache : NSObject
 
-@property (nonatomic, strong, readonly) JDiskCache *diskCache;
-@property (nonatomic, strong, readonly) JMemoryCache *memoryCache;
+@property (nonatomic, strong) id<JDiskCacheDelegate> diskCache;
+@property (nonatomic, strong) JMemoryCache *memoryCache;
 @property (nonatomic, strong) JImageCacheConfig *cacheConfig;
 
 - (instancetype)initWithNameSpace:(nullable NSString *)nameSpace;

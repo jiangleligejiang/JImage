@@ -37,7 +37,7 @@
     return self;
 }
 
-#pragma mark - public method
+#pragma mark - JDiskCacheDelegate
 
 - (void)storeImageData:(NSData *)imageData forKey:(NSString *)key {
     if (!imageData || !key || key.length == 0) {

@@ -80,6 +80,7 @@
 		A1A210402248D6C300A39089 /* JImageDownloader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JImageDownloader.m; sourceTree = "<group>"; };
 		A1A210432248DBE200A39089 /* MBProgressHUD+JUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MBProgressHUD+JUtils.h"; sourceTree = "<group>"; };
 		A1A210442248DBE200A39089 /* MBProgressHUD+JUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "MBProgressHUD+JUtils.m"; sourceTree = "<group>"; };
+		A1C44CBA22561FA400CEBF6E /* JDiskCacheDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JDiskCacheDelegate.h; sourceTree = "<group>"; };
 		A1C844BBA46089B45D986778 /* libPods-JImageUITests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-JImageUITests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1CBB3B422538554008DE4AC /* UIImage+JImageGIF.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIImage+JImageGIF.h"; sourceTree = "<group>"; };
 		A1CBB3B522538554008DE4AC /* UIImage+JImageGIF.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIImage+JImageGIF.m"; sourceTree = "<group>"; };
@@ -210,6 +211,7 @@
 				A145A8B82252F9C700A6BD97 /* JDiskCache.m */,
 				A145A8BD2253061900A6BD97 /* JImageCacheConfig.h */,
 				A145A8BE2253061900A6BD97 /* JImageCacheConfig.m */,
+				A1C44CBA22561FA400CEBF6E /* JDiskCacheDelegate.h */,
 			);
 			path = cache;
 			sourceTree = "<group>";

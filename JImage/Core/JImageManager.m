@@ -49,16 +49,25 @@
     }];
 }
 
-- (void)setCacheConfig:(JImageCacheConfig *)cacheConfig {
-    self.imageCache.cacheConfig = cacheConfig;
-}
-
 - (void)clearDiskCache {
     [self.imageCache clearAllWithCacheType:JImageCacheTypeDisk completion:nil];
 }
 
 - (void)clearMemoryCache {
     [self.imageCache clearAllWithCacheType:JImageCacheTypeMemory completion:nil];
+}
+
+#pragma mark - setter
+- (void)setCacheConfig:(JImageCacheConfig *)cacheConfig {
+    self.imageCache.cacheConfig = cacheConfig;
+}
+
+- (void)setMemoryCache:(NSCache *)memoryCache {
+    self.imageCache.memoryCache = memoryCache;
+}
+
+- (void)setDiskCache:(id<JDiskCacheDelegate>)diskCache {
+    self.imageCache.diskCache = diskCache;
 }
 
 @end
