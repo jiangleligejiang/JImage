@@ -18,6 +18,8 @@
 
 @interface JImageCache()
 @property (nonatomic, strong) dispatch_queue_t ioQueue;
+@property (nonatomic, strong, readwrite) JMemoryCache *memoryCache;
+@property (nonatomic, strong, readwrite) JDiskCache *diskCache;
 @end
 
 @implementation JImageCache
@@ -40,12 +42,18 @@
         } else {
             diskPath = [[self diskPathWithNameSpace:nameSpace] stringByAppendingString:fullNameSpace];
         }
-        self.diskCache = [[JDiskCache alloc] initWithPath:diskPath];
-        self.memoryCache = [[NSCache alloc] init];
         self.cacheConfig = [[JImageCacheConfig alloc] init];
+        self.diskCache = [[JDiskCache alloc] initWithPath:diskPath withConfig:self.cacheConfig];
+        self.memoryCache = [[NSCache alloc] init];
         self.ioQueue = dispatch_queue_create("com.jimage.cache", DISPATCH_QUEUE_SERIAL);
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
     }
     return self;
+}
+
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 #pragma mark - public method
@@ -179,6 +187,33 @@
     }
 }
 
+#pragma mark - backgournd task
+
+- (void)onDidEnterBackground:(NSNotification *)notification {
+    [self backgroundDeleteOldFiles];
+}
+
+- (void)backgroundDeleteOldFiles {
+    Class UIApplicationClass = NSClassFromString(@"UIApplication");
+    if(!UIApplicationClass || ![UIApplicationClass respondsToSelector:@selector(sharedApplication)]) {
+        return;
+    }
+    UIApplication *application = [UIApplication performSelector:@selector(sharedApplication)];
+    __block UIBackgroundTaskIdentifier bgTask = [application beginBackgroundTaskWithExpirationHandler:^{
+        [application endBackgroundTask:bgTask];
+        bgTask = UIBackgroundTaskInvalid;
+    }];
+    
+    void(^deleteBlock)(void) = ^ {
+        [self.diskCache deleteOldFiles];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [application endBackgroundTask:bgTask];
+            bgTask = UIBackgroundTaskInvalid;
+        });
+    };
+    
+    dispatch_async(self.ioQueue, deleteBlock);
+}
 
 #pragma mark - private method
 - (NSString *)diskPathWithNameSpace:(NSString *)namespace {

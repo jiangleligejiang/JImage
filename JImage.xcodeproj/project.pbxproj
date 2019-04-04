@@ -134,6 +134,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		A10883C52254ADD700D581AF /* coder */ = {
+			isa = PBXGroup;
+			children = (
+				A1E5CBE2224B1C4900A1789C /* JImageCoder.h */,
+				A1E5CBE3224B1C4900A1789C /* JImageCoder.m */,
+			);
+			path = coder;
+			sourceTree = "<group>";
+		};
 		A11444A22244C51700A9DFD7 = {
 			isa = PBXGroup;
 			children = (
@@ -195,10 +204,10 @@
 		A145A8B32252F98800A6BD97 /* cache */ = {
 			isa = PBXGroup;
 			children = (
-				A145A8B72252F9C700A6BD97 /* JDiskCache.h */,
-				A145A8B82252F9C700A6BD97 /* JDiskCache.m */,
 				A145A8BA2252F9DA00A6BD97 /* JImageCache.h */,
 				A145A8BB2252F9DA00A6BD97 /* JImageCache.m */,
+				A145A8B72252F9C700A6BD97 /* JDiskCache.h */,
+				A145A8B82252F9C700A6BD97 /* JDiskCache.m */,
 				A145A8BD2253061900A6BD97 /* JImageCacheConfig.h */,
 				A145A8BE2253061900A6BD97 /* JImageCacheConfig.m */,
 			);
@@ -208,11 +217,10 @@
 		A1A2103E2248D6A300A39089 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				A10883C52254ADD700D581AF /* coder */,
 				A1CBB3BA225398DA008DE4AC /* download */,
 				A1CBB3B3225384EE008DE4AC /* category */,
 				A145A8B32252F98800A6BD97 /* cache */,
-				A1E5CBE2224B1C4900A1789C /* JImageCoder.h */,
-				A1E5CBE3224B1C4900A1789C /* JImageCoder.m */,
 				A1CBB3B7225398AA008DE4AC /* JImageManager.h */,
 				A1CBB3B8225398AA008DE4AC /* JImageManager.m */,
 			);

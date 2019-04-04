@@ -12,21 +12,32 @@
 @interface JDiskCache ()
 @property (nonatomic, copy) NSString *diskPath;
 @property (nonatomic, strong) NSFileManager *fileManager;
+@property (nonatomic, assign) NSInteger maxCacheAge;
+@property (nonatomic, assign) NSInteger maxCacheSize;
 @end
 
 @implementation JDiskCache
 
-- (instancetype)initWithPath:(NSString *)path {
+- (instancetype)initWithPath:(NSString *)path withConfig:(JImageCacheConfig *)config{
     if (self = [super init]) {
         if (path) {
             self.diskPath = path;
         } else {
             self.diskPath = [self defaultDiskPath];
         }
+        if (config) {
+            self.maxCacheAge = config.maxCacheAge;
+            self.maxCacheSize = config.maxCacheSize;
+        } else {
+            self.maxCacheSize = NSIntegerMax;
+            self.maxCacheAge = NSIntegerMax;
+        }
         self.fileManager = [NSFileManager new];
     }
     return self;
 }
+
+#pragma mark - public method
 
 - (void)storeImageData:(NSData *)imageData forKey:(NSString *)key {
     if (!imageData || !key || key.length == 0) {
@@ -82,6 +93,58 @@
     }
 }
 
+- (void)deleteOldFiles {
+    NSLog(@"start clean up old files");
+    NSURL *diskCacheURL = [NSURL fileURLWithPath:self.diskPath isDirectory:YES];
+    NSArray<NSString *> *resourceKeys = @[NSURLIsDirectoryKey, NSURLContentAccessDateKey, NSURLTotalFileAllocatedSizeKey];
+    NSDirectoryEnumerator *fileEnumerator = [self.fileManager enumeratorAtURL:diskCacheURL includingPropertiesForKeys:resourceKeys options:NSDirectoryEnumerationSkipsHiddenFiles errorHandler:NULL];
+    NSDate *expirationDate = [NSDate dateWithTimeIntervalSinceNow:-self.maxCacheAge];
+    NSMutableArray <NSURL *> *deleteURLs = [NSMutableArray array];
+    NSMutableDictionary<NSURL *, NSDictionary<NSString *, id>*> *cacheFiles = [NSMutableDictionary dictionary];
+    NSInteger currentCacheSize = 0;
+    for (NSURL *fileURL in fileEnumerator) {
+        NSError *error;
+        NSDictionary<NSString *, id> *resourceValues = [fileURL resourceValuesForKeys:resourceKeys error:&error];
+        if (error || !resourceValues || [resourceValues[NSURLIsDirectoryKey] boolValue]) {
+            continue;
+        }
+        NSDate *accessDate = resourceValues[NSURLContentAccessDateKey];
+        if ([accessDate earlierDate:expirationDate]) {
+            [deleteURLs addObject:fileURL];
+            continue;
+        }
+        
+        NSNumber *fileSize = resourceValues[NSURLTotalFileAllocatedSizeKey];
+        currentCacheSize += fileSize.unsignedIntegerValue;
+        [cacheFiles setObject:resourceValues forKey:fileURL];
+    }
+    
+    for (NSURL *URL in deleteURLs) {
+        NSLog(@"delete old file: %@", URL.absoluteString);
+        [self.fileManager removeItemAtURL:URL error:nil];
+    }
+    
+    if (self.maxCacheSize > 0 && currentCacheSize > self.maxCacheSize) {
+        NSUInteger desiredCacheSize = self.maxCacheSize / 2;
+        NSArray<NSURL *> *sortedFiles = [cacheFiles keysSortedByValueWithOptions:NSSortConcurrent usingComparator:^NSComparisonResult(id  _Nonnull obj1, id  _Nonnull obj2) {
+            return [obj1[NSURLContentAccessDateKey] compare:obj2[NSURLContentAccessDateKey]];
+        }];
+        for (NSURL *fileURL in sortedFiles) {
+            if ([self.fileManager removeItemAtURL:fileURL error:nil]) {
+                NSDictionary<NSString *, id> *resourceValues = cacheFiles[fileURL];
+                NSNumber *fileSize = resourceValues[NSURLTotalFileAllocatedSizeKey];
+                currentCacheSize -= fileSize.unsignedIntegerValue;
+                
+                if (currentCacheSize < desiredCacheSize) {
+                    break;
+                }
+            }
+        }
+    }
+}
+
+
+#pragma mark - private method
 - (NSString *)filePathForKey:(NSString *)key {
     return [self.diskPath stringByAppendingPathComponent:[self cachedFileNameForKey:key]];
 }

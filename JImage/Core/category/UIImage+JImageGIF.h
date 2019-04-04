@@ -2,7 +2,7 @@
 //  UIImage+JImageGIF.h
 //  JImage
 //
-//  Created by liuqiang on 2019/4/2.
+//  Created by jams on 2019/4/2.
 //  Copyright © 2019 jams. All rights reserved.
 //
 

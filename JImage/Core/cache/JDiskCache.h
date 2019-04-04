@@ -8,12 +8,12 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-
+#import "JImageCacheConfig.h"
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JDiskCache : NSObject
 
-- (instancetype)initWithPath:(nullable NSString *)path;
+- (instancetype)initWithPath:(nullable NSString *)path withConfig:(nullable JImageCacheConfig *)config;
 
 - (void)storeImageData:(nullable NSData *)imageData
             forKey:(nullable NSString *)key;
@@ -25,6 +25,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)containImageDataForKey:(nullable NSString *)key;
 
 - (void)clearDiskCache;
+
+- (void)deleteOldFiles;
 
 @end
 

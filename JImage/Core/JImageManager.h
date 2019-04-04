@@ -2,13 +2,13 @@
 //  JImageManager.h
 //  JImage
 //
-//  Created by liuqiang on 2019/4/2.
+//  Created by jams on 2019/4/2.
 //  Copyright © 2019 jams. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-
+#import "JImageCacheConfig.h"
 NS_ASSUME_NONNULL_BEGIN
 
 @interface JImageManager : NSObject
@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)shareManager;
 
 - (void)loadImageWithUrl:(NSString *)url complection:(void(^)(UIImage * _Nullable image, NSError * _Nullable error))completionBlock;
+
+- (void)setCacheConfig:(JImageCacheConfig *)cacheConfig;
 
 - (void)clearMemoryCache;
 

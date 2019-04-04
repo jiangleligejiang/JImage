@@ -143,6 +143,11 @@ static NSString *gifUrl = @"https://user-gold-cdn.xitu.io/2019/3/27/169bce612ee4
 - (void)downloadImage {
     //NSString *imageUrl = @"https://user-gold-cdn.xitu.io/2019/3/25/169b406dfc5fe46e";
     __weak typeof(self) weakSelf = self;
+    
+    JImageCacheConfig *config = [[JImageCacheConfig alloc] init];
+    config.maxCacheAge = 10;
+    [[JImageManager shareManager] setCacheConfig:config];
+    
     [[JImageManager shareManager] loadImageWithUrl:gifUrl complection:^(UIImage * _Nullable image, NSError * _Nullable error) {
         __strong typeof (weakSelf) strongSelf = weakSelf;
         if (strongSelf && image) {
