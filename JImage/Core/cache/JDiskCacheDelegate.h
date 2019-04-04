@@ -7,24 +7,16 @@
 //
 
 #import <Foundation/Foundation.h>
-
 NS_ASSUME_NONNULL_BEGIN
-
 @protocol JDiskCacheDelegate <NSObject>
-
 - (void)storeImageData:(nullable NSData *)imageData
                 forKey:(nullable NSString *)key;
-
 - (nullable NSData *)queryImageDataForKey:(nullable NSString *)key;
-
 - (BOOL)removeImageDataForKey:(nullable NSString *)key;
-
 - (BOOL)containImageDataForKey:(nullable NSString *)key;
-
 - (void)clearDiskCache;
 
-- (void)deleteOldFiles;
-
+@optional
+- (void)deleteOldFiles; //后台更新文件
 @end
-
 NS_ASSUME_NONNULL_END

@@ -203,7 +203,9 @@
     }];
     
     void(^deleteBlock)(void) = ^ {
-        [self.diskCache deleteOldFiles];
+        if ([self.diskCache respondsToSelector:@selector(deleteOldFiles)]) {
+            [self.diskCache deleteOldFiles];
+        }
         dispatch_async(dispatch_get_main_queue(), ^{
             [application endBackgroundTask:bgTask];
             bgTask = UIBackgroundTaskInvalid;
