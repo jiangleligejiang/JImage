@@ -47,7 +47,7 @@ typedef NSMapTable<NSString *, id<JImageOperation>> JOperationDictionay;
             operation = [operationDict objectForKey:key];
         }
         if (operation && [operation conformsToProtocol:@protocol(JImageOperation)]) {
-            [operation cancel];
+            [operation cancelOperation];
         }
         @synchronized (self) {
             [operationDict removeObjectForKey:key];

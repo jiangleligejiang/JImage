@@ -36,6 +36,10 @@ FOUNDATION_EXTERN_INLINE BOOL JCGImageRefContainsAlpha(CGImageRef imageRef) {
     return hasAlpha;
 }
 
+@interface JImageCoder ()
+@property (nonatomic, strong) dispatch_queue_t coderQueue;
+@end
+
 @implementation JImageCoder
 
 + (instancetype)shareCoder {
@@ -43,12 +47,24 @@ FOUNDATION_EXTERN_INLINE BOOL JCGImageRefContainsAlpha(CGImageRef imageRef) {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         instance = [[JImageCoder alloc] init];
+        [instance setup];
     });
     return instance;
 }
 
+- (void)setup {
+    self.coderQueue = dispatch_queue_create("com.jimage.coder.queue", DISPATCH_QUEUE_SERIAL);
+}
+
 #pragma mark - encode
-- (NSData *)encodedDataWithImage:(UIImage *)image {
+- (void)encodedDataWithImage:(UIImage *)image WithBlock:(void (^)(NSData * _Nullable))completionBlock {
+    dispatch_async(self.coderQueue, ^{
+        NSData *data = [self encodedDataSyncWithImage:image];
+        completionBlock(data);
+    });
+}
+
+- (NSData *)encodedDataSyncWithImage:(UIImage *)image {
     if (!image) {
         return nil;
     }
@@ -108,7 +124,14 @@ FOUNDATION_EXTERN_INLINE BOOL JCGImageRefContainsAlpha(CGImageRef imageRef) {
 
 
 #pragma mark - decode
-- (UIImage *)decodeImageWithData:(NSData *)data {
+- (void)decodeImageWithData:(NSData *)data WithBlock:(void (^)(UIImage * _Nullable))completionBlock {
+    dispatch_async(self.coderQueue, ^{
+        UIImage *image = [self decodeImageSyncWithData:data];
+        completionBlock(image);
+    });
+}
+
+- (UIImage *)decodeImageSyncWithData:(NSData *)data {
     JImageFormat format = [self imageFormatWithData:data];
     switch (format) {
         case JImageFormatJPEG:

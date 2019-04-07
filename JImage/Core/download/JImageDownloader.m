@@ -9,8 +9,14 @@
 #import "JImageDownloader.h"
 #import "JImageCoder.h"
 
+#define LOCK(lock) dispatch_semaphore_wait(lock, DISPATCH_TIME_FOREVER);
+#define UNLOCK(lock) dispatch_semaphore_signal(lock);
+
 @interface JImageDownloader()
 @property (nonatomic, strong) NSURLSession *session;
+@property (nonatomic, strong) NSOperationQueue *operationQueue;
+@property (nonatomic, strong) NSMutableDictionary<NSURL *, JImageDownloadOperation *> *URLOperations;
+@property (nonatomic, strong) dispatch_semaphore_t URLsLock;
 @end
 
 @implementation JImageDownloader
@@ -27,6 +33,9 @@
 
 - (void)setup {
     self.session = [NSURLSession sharedSession];
+    self.operationQueue = [[NSOperationQueue alloc] init];
+    self.URLOperations = [NSMutableDictionary dictionary];
+    self.URLsLock = dispatch_semaphore_create(1);
 }
 
 - (void)fetchImageWithURL:(NSString *)url completion:(void (^)(UIImage * _Nullable, NSData * _Nullable data, NSError * _Nullable))completionBlock {
@@ -39,19 +48,42 @@
         return;
     }
     
-    NSURLSessionDataTask *dataTask = [self.session dataTaskWithURL:URL completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        UIImage *image = nil;
-        if (!error && data) {
-            image = [[JImageCoder shareCoder] decodeImageWithData:data];
-        }
-        if (error) {
-            NSLog(@"fetch image from net fail:%@", error.description ? : @"");
-        } else {
-            NSLog(@"image from network");
-        }
-        completionBlock(image, data, error);
-    }];
-    [dataTask resume];
+    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
+    id<JImageOperation> operation = [[JImageDownloadOperation alloc] initWithRequest:request];
+    [self.operationQueue addOperation:operation];
+}
+
+- (void)fetchImageWithURL:(NSString *)url progressBlock:(JImageDownloadProgressBlock)progressBlock completionBlock:(JImageDownloadCompletionBlock)completionBlock {
+    if (!url || url.length == 0) {
+        return;
+    }
+    
+    NSURL *URL = [NSURL URLWithString:url];
+    if (!URL) {
+        return;
+    }
+    
+    LOCK(self.URLsLock);
+    JImageDownloadOperation *operation = [self.URLOperations objectForKey:URL];
+    if (!operation || operation.isCancelled || operation.isFinished) {
+        NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
+        operation = [[JImageDownloadOperation alloc] initWithRequest:request];
+        __weak typeof(self) weakSelf = self;
+        operation.completionBlock = ^{
+            __strong typeof(weakSelf) strongSelf = weakSelf;
+            if (!strongSelf) {
+                return;
+            }
+            LOCK(self.URLsLock);
+            [strongSelf.URLOperations removeObjectForKey:URL];
+            UNLOCK(self.URLsLock);
+        };
+        [self.operationQueue addOperation:operation];
+        [self.URLOperations setObject:operation forKey:URL];
+    }
+    UNLOCK(self.URLsLock);
+    [operation addProgressHandler:progressBlock withCompletionBlock:completionBlock];
+    
 }
 
 @end

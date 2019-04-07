@@ -65,7 +65,7 @@
             if (image) {
                 [self.memoryCache setObject:image forKey:key cost:image.memoryCost];
             } else if (imageData) {
-                UIImage *decodedImage = [[JImageCoder shareCoder] decodeImageWithData:imageData];
+                UIImage *decodedImage = [[JImageCoder shareCoder] decodeImageSyncWithData:imageData];
                 [self.memoryCache setObject:decodedImage forKey:key cost:decodedImage.memoryCost];
             }
         }
@@ -73,7 +73,7 @@
             if (imageData) {
                 [self.diskCache storeImageData:imageData forKey:key];
             } else if (image) {
-                NSData *data = [[JImageCoder shareCoder] encodedDataWithImage:image];
+                NSData *data = [[JImageCoder shareCoder] encodedDataSyncWithImage:image];
                 if (data) {
                     [self.diskCache storeImageData:data forKey:key];
                 }
@@ -97,7 +97,7 @@
         } else if (cacheType == JImageCacheTypeDisk) {
             NSData *data = [self.diskCache queryImageDataForKey:key];
             if (data) {
-                image = [[JImageCoder shareCoder] decodeImageWithData:data];
+                image = [[JImageCoder shareCoder] decodeImageSyncWithData:data];
             }
         } else if (cacheType == JImageCacheTypeAll) {
             image = [self.memoryCache objectForKey:key];
@@ -106,7 +106,7 @@
                 NSData *data = [self.diskCache queryImageDataForKey:key];
                 if (data) {
                     cacheFrom = JImageCacheTypeDisk;
-                    image = [[JImageCoder shareCoder] decodeImageWithData:data];
+                    image = [[JImageCoder shareCoder] decodeImageSyncWithData:data];
                     [self.memoryCache setObject:image forKey:key cost:image.memoryCost];
                 }
             }

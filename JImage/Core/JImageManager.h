@@ -12,11 +12,15 @@
 #import "JDiskCacheDelegate.h"
 NS_ASSUME_NONNULL_BEGIN
 
+typedef void(^JImageProgressBlock)(NSInteger receivedSize, NSInteger expectedSize, NSURL *_Nullable targetURL);
+typedef void(^JImageCompletionBlock)(UIImage * _Nullable image, NSError * _Nullable error);
 @interface JImageManager : NSObject
 
 + (instancetype)shareManager;
 
 - (void)loadImageWithUrl:(NSString *)url complection:(void(^)(UIImage * _Nullable image, NSError * _Nullable error))completionBlock;
+
+- (void)loadImageWithUrl:(NSString *)url progress:(JImageProgressBlock)progressBlock completion:(JImageCompletionBlock)completionBlock;
 
 - (void)setCacheConfig:(JImageCacheConfig *)cacheConfig;
 

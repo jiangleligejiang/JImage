@@ -21,6 +21,8 @@
 		A145A8BF2253061900A6BD97 /* JImageCacheConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = A145A8BE2253061900A6BD97 /* JImageCacheConfig.m */; };
 		A1A210412248D6C300A39089 /* JImageDownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = A1A210402248D6C300A39089 /* JImageDownloader.m */; };
 		A1A210452248DBE200A39089 /* MBProgressHUD+JUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = A1A210442248DBE200A39089 /* MBProgressHUD+JUtils.m */; };
+		A1C4C3D622585C5F002DC985 /* JImageDownloadOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = A1C4C3D522585C5F002DC985 /* JImageDownloadOperation.m */; };
+		A1C4C3D922599EA3002DC985 /* UIView+JImage.m in Sources */ = {isa = PBXBuildFile; fileRef = A1C4C3D822599EA3002DC985 /* UIView+JImage.m */; };
 		A1CBB3B622538554008DE4AC /* UIImage+JImageGIF.m in Sources */ = {isa = PBXBuildFile; fileRef = A1CBB3B522538554008DE4AC /* UIImage+JImageGIF.m */; };
 		A1CBB3B9225398AA008DE4AC /* JImageManager.m in Sources */ = {isa = PBXBuildFile; fileRef = A1CBB3B8225398AA008DE4AC /* JImageManager.m */; };
 		A1D8DDDE2252496B00023EC0 /* UIView+JImageOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = A1D8DDDD2252496B00023EC0 /* UIView+JImageOperation.m */; };
@@ -81,6 +83,10 @@
 		A1A210432248DBE200A39089 /* MBProgressHUD+JUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MBProgressHUD+JUtils.h"; sourceTree = "<group>"; };
 		A1A210442248DBE200A39089 /* MBProgressHUD+JUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "MBProgressHUD+JUtils.m"; sourceTree = "<group>"; };
 		A1C44CBA22561FA400CEBF6E /* JDiskCacheDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JDiskCacheDelegate.h; sourceTree = "<group>"; };
+		A1C4C3D422585C5F002DC985 /* JImageDownloadOperation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JImageDownloadOperation.h; sourceTree = "<group>"; };
+		A1C4C3D522585C5F002DC985 /* JImageDownloadOperation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JImageDownloadOperation.m; sourceTree = "<group>"; };
+		A1C4C3D722599EA3002DC985 /* UIView+JImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+JImage.h"; sourceTree = "<group>"; };
+		A1C4C3D822599EA3002DC985 /* UIView+JImage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+JImage.m"; sourceTree = "<group>"; };
 		A1C844BBA46089B45D986778 /* libPods-JImageUITests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-JImageUITests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1CBB3B422538554008DE4AC /* UIImage+JImageGIF.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIImage+JImageGIF.h"; sourceTree = "<group>"; };
 		A1CBB3B522538554008DE4AC /* UIImage+JImageGIF.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIImage+JImageGIF.m"; sourceTree = "<group>"; };
@@ -225,6 +231,8 @@
 				A145A8B32252F98800A6BD97 /* cache */,
 				A1CBB3B7225398AA008DE4AC /* JImageManager.h */,
 				A1CBB3B8225398AA008DE4AC /* JImageManager.m */,
+				A1C4C3D722599EA3002DC985 /* UIView+JImage.h */,
+				A1C4C3D822599EA3002DC985 /* UIView+JImage.m */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -257,6 +265,8 @@
 				A1D8DDDD2252496B00023EC0 /* UIView+JImageOperation.m */,
 				A1A2103F2248D6C300A39089 /* JImageDownloader.h */,
 				A1A210402248D6C300A39089 /* JImageDownloader.m */,
+				A1C4C3D422585C5F002DC985 /* JImageDownloadOperation.h */,
+				A1C4C3D522585C5F002DC985 /* JImageDownloadOperation.m */,
 			);
 			path = download;
 			sourceTree = "<group>";
@@ -464,6 +474,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A1C4C3D922599EA3002DC985 /* UIView+JImage.m in Sources */,
 				A1CBB3B9225398AA008DE4AC /* JImageManager.m in Sources */,
 				A11444B32244C51700A9DFD7 /* ViewController.m in Sources */,
 				A145A8BF2253061900A6BD97 /* JImageCacheConfig.m in Sources */,
@@ -474,6 +485,7 @@
 				A1E5CBE7224B216300A1789C /* UIImage+JImageFormat.m in Sources */,
 				A1E5CBE4224B1C4900A1789C /* JImageCoder.m in Sources */,
 				A1D8DDDE2252496B00023EC0 /* UIView+JImageOperation.m in Sources */,
+				A1C4C3D622585C5F002DC985 /* JImageDownloadOperation.m in Sources */,
 				A11444BE2244C51900A9DFD7 /* main.m in Sources */,
 				A11444B02244C51700A9DFD7 /* AppDelegate.m in Sources */,
 				A1CBB3B622538554008DE4AC /* UIImage+JImageGIF.m in Sources */,

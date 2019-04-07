@@ -9,6 +9,7 @@
 #import "JImageManager.h"
 #import "JImageCache.h"
 #import "JImageDownloader.h"
+#import "JImageCoder.h"
 
 @interface JImageManager ()
 @property (nonatomic, strong) JImageCache *imageCache;
@@ -45,6 +46,33 @@
             dispatch_async(dispatch_get_main_queue(), ^{
                 completionBlock(image, error);
             });
+        }];
+    }];
+}
+
+- (void)loadImageWithUrl:(NSString *)url progress:(JImageProgressBlock)progressBlock completion:(JImageCompletionBlock)completionBlock {
+    [self.imageCache queryImageForKey:url cacheType:JImageCacheTypeAll completion:^(UIImage * _Nullable image, JImageCacheType cacheType) {
+        if (image) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completionBlock(image, nil);
+            });
+            NSLog(@"fetch image from %@", (cacheType == JImageCacheTypeMemory) ? @"memory" : @"disk");
+            return;
+        }
+        
+        [[JImageDownloader shareInstance] fetchImageWithURL:url progressBlock:progressBlock completionBlock:^(NSData * _Nullable imageData, NSError * _Nullable error, BOOL finished) {
+            if (!imageData || error) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    completionBlock(nil, error);
+                });
+                return;
+            }
+            [[JImageCoder shareCoder] decodeImageWithData:imageData WithBlock:^(UIImage * _Nullable image) {
+                [self.imageCache storeImage:image imageData:imageData forKey:url completion:nil];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    completionBlock(image, nil);
+                });
+            }];
         }];
     }];
 }

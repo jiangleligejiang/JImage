@@ -10,6 +10,6 @@
 
 @protocol JImageOperation <NSObject>
 
-- (void)cancel;
+- (void)cancelOperation;
 
 @end
