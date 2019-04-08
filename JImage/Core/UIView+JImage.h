@@ -7,12 +7,19 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "JImageManager.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface UIView (JImage)
 
+- (void)setImageWithURL:(NSString *)url
+          progressBlock:(JImageProgressBlock)progressBlock
+        completionBlock:(JImageCompletionBlock)completionBlock;
 
+- (void)setImageWithURL:(NSString *)url;
+
+- (void)cancelLoadImage;
 
 @end
 

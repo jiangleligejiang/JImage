@@ -10,6 +10,33 @@
 #import "JImageCache.h"
 #import "JImageDownloader.h"
 #import "JImageCoder.h"
+#import "JImageOperation.h"
+
+#define SAFE_CALL_BLOCK(blockFunc, ...)    \
+    if (blockFunc) {                        \
+        blockFunc(__VA_ARGS__);              \
+    }
+
+@interface JImageCombineOperation : NSObject <JImageOperation>
+@property (nonatomic, strong) NSOperation *cacheOperation;
+@property (nonatomic, strong) JImageDownloadToken* downloadToken;
+@property (nonatomic, copy) NSString *url;
+@end
+
+@implementation JImageCombineOperation
+
+- (void)cancelOperation {
+    NSLog(@"cancel operation for url:%@", self.url ? : @"");
+    if (self.cacheOperation) {
+        [self.cacheOperation cancel];
+    }
+    if (self.downloadToken) {
+        [[JImageDownloader shareInstance] cancelWithToken:self.downloadToken];
+    }
+}
+
+@end
+
 
 @interface JImageManager ()
 @property (nonatomic, strong) JImageCache *imageCache;
@@ -31,31 +58,35 @@
     self.imageCache = [[JImageCache alloc] init];
 }
 
-- (void)loadImageWithUrl:(NSString *)url progress:(JImageProgressBlock)progressBlock completion:(JImageCompletionBlock)completionBlock {
-    [self.imageCache queryImageForKey:url cacheType:JImageCacheTypeAll completion:^(UIImage * _Nullable image, JImageCacheType cacheType) {
+- (id<JImageOperation>)loadImageWithUrl:(NSString *)url progress:(JImageProgressBlock)progressBlock completion:(JImageCompletionBlock)completionBlock {
+    __block JImageCombineOperation *combineOperation = [JImageCombineOperation new];
+    combineOperation.url = url;
+    combineOperation.cacheOperation =  [self.imageCache queryImageForKey:url cacheType:JImageCacheTypeAll completion:^(UIImage * _Nullable image, JImageCacheType cacheType) {
         if (image) {
             dispatch_async(dispatch_get_main_queue(), ^{
-                completionBlock(image, nil);
+                SAFE_CALL_BLOCK(completionBlock, image, nil);
             });
             NSLog(@"fetch image from %@", (cacheType == JImageCacheTypeMemory) ? @"memory" : @"disk");
             return;
         }
         
-        [[JImageDownloader shareInstance] fetchImageWithURL:url progressBlock:progressBlock completionBlock:^(NSData * _Nullable imageData, NSError * _Nullable error, BOOL finished) {
+        JImageDownloadToken *downloadToken = [[JImageDownloader shareInstance] fetchImageWithURL:url progressBlock:progressBlock completionBlock:^(NSData * _Nullable imageData, NSError * _Nullable error, BOOL finished) {
             if (!imageData || error) {
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    completionBlock(nil, error);
+                    SAFE_CALL_BLOCK(completionBlock, nil, error);
                 });
                 return;
             }
             [[JImageCoder shareCoder] decodeImageWithData:imageData WithBlock:^(UIImage * _Nullable image) {
                 [self.imageCache storeImage:image imageData:imageData forKey:url completion:nil];
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    completionBlock(image, nil);
+                    SAFE_CALL_BLOCK(completionBlock, image, nil);
                 });
             }];
         }];
+        combineOperation.downloadToken = downloadToken;
     }];
+    return combineOperation;
 }
 
 - (void)clearDiskCache {

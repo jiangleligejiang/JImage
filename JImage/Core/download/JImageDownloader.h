@@ -11,13 +11,21 @@
 #import "JImageDownloadOperation.h"
 
 NS_ASSUME_NONNULL_BEGIN
+
+@interface JImageDownloadToken : NSObject
+@property (nonatomic, strong, nullable) id downloadToken;
+@property (nonatomic, strong, nullable) NSURL *url;
+@end
+
 @interface JImageDownloader : NSObject
 
 + (instancetype)shareInstance;
 
-- (void)fetchImageWithURL:(NSString *)url
-           progressBlock:(nullable JImageDownloadProgressBlock)progressBlock
-         completionBlock:(nullable JImageDownloadCompletionBlock)completionBlock;
+- (nullable JImageDownloadToken *)fetchImageWithURL:(NSString *)url
+                                      progressBlock:(nullable JImageDownloadProgressBlock)progressBlock
+                                    completionBlock:(nullable JImageDownloadCompletionBlock)completionBlock;
+
+- (void)cancelWithToken:(JImageDownloadToken *)token;
 
 @end
 

@@ -38,14 +38,14 @@
     self.URLsLock = dispatch_semaphore_create(1);
 }
 
-- (void)fetchImageWithURL:(NSString *)url progressBlock:(JImageDownloadProgressBlock)progressBlock completionBlock:(JImageDownloadCompletionBlock)completionBlock {
+- (JImageDownloadToken *)fetchImageWithURL:(NSString *)url progressBlock:(JImageDownloadProgressBlock)progressBlock completionBlock:(JImageDownloadCompletionBlock)completionBlock {
     if (!url || url.length == 0) {
-        return;
+        return nil;
     }
     
     NSURL *URL = [NSURL URLWithString:url];
     if (!URL) {
-        return;
+        return nil;
     }
     
     LOCK(self.URLsLock);
@@ -67,8 +67,34 @@
         [self.URLOperations setObject:operation forKey:URL];
     }
     UNLOCK(self.URLsLock);
-    [operation addProgressHandler:progressBlock withCompletionBlock:completionBlock];
+    id downloadToken = [operation addProgressHandler:progressBlock withCompletionBlock:completionBlock];
+    JImageDownloadToken *token = [JImageDownloadToken new];
+    token.url = URL;
+    token.downloadToken = downloadToken;
+    return token;
+}
+
+- (void)cancelWithToken:(JImageDownloadToken *)token {
+    if (!token || !token.url) {
+        return;
+    }
+    
+    LOCK(self.URLsLock);
+    JImageDownloadOperation *opertion = [self.URLOperations objectForKey:token.url];
+    UNLOCK(self.URLsLock);
+    if (opertion) {
+        BOOL hasCancelTask = [opertion cancelWithToken:token.downloadToken];
+        if (hasCancelTask) {
+            LOCK(self.URLsLock);
+            [self.URLOperations removeObjectForKey:token.url];
+            UNLOCK(self.URLsLock);
+            NSLog(@"cancle download task for url:%@", token.url ? : @"");
+        }
+    }
     
 }
 
+@end
+
+@implementation JImageDownloadToken
 @end

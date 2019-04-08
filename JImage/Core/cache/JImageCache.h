@@ -37,7 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
             forKey:(nullable NSString *)key
         completion:(nullable void(^)(void))completionBlock;
 
-- (void)queryImageForKey:(nullable NSString *)key
+- (nullable NSOperation *)queryImageForKey:(nullable NSString *)key
                cacheType:(JImageCacheType)cacheType
               completion:(nullable void(^)(UIImage *_Nullable image, JImageCacheType cacheType))completionBlock;
 

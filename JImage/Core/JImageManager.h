@@ -10,6 +10,7 @@
 #import <UIKit/UIKit.h>
 #import "JImageCacheConfig.h"
 #import "JDiskCacheDelegate.h"
+#import "JImageOperation.h"
 NS_ASSUME_NONNULL_BEGIN
 
 typedef void(^JImageProgressBlock)(NSInteger receivedSize, NSInteger expectedSize, NSURL *_Nullable targetURL);
@@ -18,7 +19,7 @@ typedef void(^JImageCompletionBlock)(UIImage * _Nullable image, NSError * _Nulla
 
 + (instancetype)shareManager;
 
-- (void)loadImageWithUrl:(NSString *)url progress:(JImageProgressBlock)progressBlock completion:(JImageCompletionBlock)completionBlock;
+- (id<JImageOperation>)loadImageWithUrl:(NSString *)url progress:(nullable JImageProgressBlock)progressBlock completion:(nullable JImageCompletionBlock)completionBlock;
 
 - (void)setCacheConfig:(JImageCacheConfig *)cacheConfig;
 

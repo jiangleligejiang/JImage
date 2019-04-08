@@ -18,7 +18,7 @@ static NSString *const kImageCompletionCallback = @"kImageCompletionCallback";
 @property (nonatomic, strong) NSURLRequest *request;
 @property (nonatomic, strong) NSURLSession *session;
 @property (nonatomic, strong) NSURLSessionDataTask *dataTask;
-@property (nonatomic, strong) NSMutableArray *callbacks;
+@property (nonatomic, strong) NSMutableArray *callbackBlocks;
 @property (nonatomic, strong) dispatch_semaphore_t callbacksLock;
 @property (nonatomic, assign, getter=isFinished) BOOL finished;
 @property (nonatomic, assign) NSInteger expectedSize;
@@ -31,7 +31,7 @@ static NSString *const kImageCompletionCallback = @"kImageCompletionCallback";
 - (instancetype)initWithRequest:(NSURLRequest *)request {
     if (self = [super init]) {
         self.request = request;
-        self.callbacks = [NSMutableArray new];
+        self.callbackBlocks = [NSMutableArray new];
         self.callbacksLock = dispatch_semaphore_create(1);
     }
     return self;
@@ -39,21 +39,36 @@ static NSString *const kImageCompletionCallback = @"kImageCompletionCallback";
 
 #pragma mark - callbacks
 - (id)addProgressHandler:(JImageDownloadProgressBlock)progressBlock withCompletionBlock:(JImageDownloadCompletionBlock)completionBlock {
-    LOCK(self.callbacksLock);
     JImageCallbackDictionary *callback = [NSMutableDictionary new];
-    [callback setObject:progressBlock forKey:kImageProgressCallback];
-    [callback setObject:completionBlock forKey:kImageCompletionCallback];
-    [self.callbacks addObject:callback];
+    if(progressBlock) [callback setObject:[progressBlock copy] forKey:kImageProgressCallback];
+    if(completionBlock) [callback setObject:[completionBlock copy] forKey:kImageCompletionCallback];
+    LOCK(self.callbacksLock);
+    [self.callbackBlocks addObject:callback];
     UNLOCK(self.callbacksLock);
     return callback;
 }
 
 - (nullable NSArray *)callbacksForKey:(NSString *)key {
     LOCK(self.callbacksLock);
-    NSMutableArray *callbacks = [[self.callbacks valueForKey:key] mutableCopy];
+    NSMutableArray *callbacks = [[self.callbackBlocks valueForKey:key] mutableCopy];
     UNLOCK(self.callbacksLock);
     [callbacks removeObject:[NSNull null]];
     return [callbacks copy];
+}
+
+#pragma mark - cancel
+- (BOOL)cancelWithToken:(id)token {
+    BOOL shouldCancelTask = NO;
+    LOCK(self.callbacksLock);
+    [self.callbackBlocks removeObjectIdenticalTo:token];
+    if (self.callbackBlocks.count == 0) {
+        shouldCancelTask = YES;
+    }
+    UNLOCK(self.callbacksLock);
+    if (shouldCancelTask) {
+        [self cancel];
+    }
+    return shouldCancelTask;
 }
 
 #pragma mark - NSOperation
@@ -89,7 +104,7 @@ static NSString *const kImageCompletionCallback = @"kImageCompletionCallback";
 
 - (void)reset {
     LOCK(self.callbacksLock);
-    [self.callbacks removeAllObjects];
+    [self.callbackBlocks removeAllObjects];
     UNLOCK(self.callbacksLock);
     
     self.dataTask = nil;

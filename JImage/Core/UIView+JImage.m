@@ -7,15 +7,46 @@
 //
 
 #import "UIView+JImage.h"
-
+#import "UIView+JImageOperation.h"
+#import "UIImage+JImageFormat.h"
 @implementation UIView (JImage)
 
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
+- (void)setImageWithURL:(NSString *)url progressBlock:(JImageProgressBlock)progressBlock completionBlock:(JImageCompletionBlock)completionBlock {
+    id<JImageOperation> operation = [[JImageManager shareManager] loadImageWithUrl:url progress:progressBlock completion:completionBlock];
+    [self setOperation:operation forKey:NSStringFromClass([self class])];
 }
-*/
+
+- (void)setImageWithURL:(NSString *)url {
+    __weak typeof(self) weakSelf = self;
+    id<JImageOperation> operation = [[JImageManager shareManager] loadImageWithUrl:url progress:nil completion:^(UIImage * _Nullable image, NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"set image fail with url:%@, error:%@", url, error.description ? : @"");
+        } else if (image) {
+            __strong typeof(weakSelf) strongSelf = weakSelf;
+            if (!strongSelf) {
+                return;
+            }
+            if ([self isKindOfClass:[UIImageView class]]) {
+                UIImageView *imageView = (UIImageView *)strongSelf;
+                if (image.imageFormat == JImageFormatGIF) {
+                    imageView.animationImages = image.images;
+                    imageView.animationDuration = image.totalTimes;
+                    imageView.animationRepeatCount = image.loopCount;
+                    [imageView startAnimating];
+                } else {
+                    imageView.image = image;
+                }
+            } else if ([self isKindOfClass:[UIButton class]]) {
+                UIButton *button = (UIButton *)strongSelf;
+                [button setImage:image forState:UIControlStateNormal];
+            }
+        }
+    }];
+    [self setOperation:operation forKey:NSStringFromClass([self class])];
+}
+
+- (void)cancelLoadImage {
+    [self cancelOperationForKey:NSStringFromClass([self class])];
+}
 
 @end

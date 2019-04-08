@@ -14,6 +14,8 @@
 #import "UIImage+JImageFormat.h"
 #import "YYWebImage.h"
 #import "FLAnimatedImageView+WebCache.h"
+#import "UIView+JImage.h"
+#import "UIView+WebCache.h"
 @interface ViewController ()
 @property (nonatomic, strong) UIImageView *imageView;
 @property (nonatomic, strong) YYAnimatedImageView *yyImageView;
@@ -25,6 +27,7 @@
     [super viewDidLoad];
     self.imageView = [[UIImageView alloc] init];
     self.imageView.backgroundColor = [UIColor lightGrayColor];
+    self.imageView.contentMode = UIViewContentModeScaleAspectFit;
     [self.view addSubview:self.imageView];
     
     self.yyImageView = [[YYAnimatedImageView alloc] init];
@@ -139,7 +142,7 @@
 }
 
 
-static NSString *gifUrl = @"https://user-gold-cdn.xitu.io/2019/3/27/169bce612ee4dc21";
+static NSString *gifUrl = @"https://user-gold-cdn.xitu.io/2019/4/8/169fbb30f5c6cf48";
 - (void)downloadImage {
     //NSString *imageUrl = @"https://user-gold-cdn.xitu.io/2019/3/25/169b406dfc5fe46e";
     __weak typeof(self) weakSelf = self;
@@ -148,9 +151,25 @@ static NSString *gifUrl = @"https://user-gold-cdn.xitu.io/2019/3/27/169bce612ee4
     config.maxCacheAge = 60;
     [[JImageManager shareManager] setCacheConfig:config];
     
-    [[JImageManager shareManager] loadImageWithUrl:gifUrl progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
+//    [[JImageManager shareManager] loadImageWithUrl:gifUrl progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
+//        NSLog(@"expectedSize:%ld, receivedSize:%ld, targetURL:%@", expectedSize, receivedSize, targetURL.absoluteString);
+//    } completion:^(UIImage * _Nullable image, NSError * _Nullable error) {
+//        __strong typeof (weakSelf) strongSelf = weakSelf;
+//        if (strongSelf && image) {
+//            if (image.imageFormat == JImageFormatGIF) {
+//                strongSelf.imageView.animationImages = image.images;
+//                strongSelf.imageView.animationDuration = image.totalTimes;
+//                strongSelf.imageView.animationRepeatCount = image.loopCount;
+//                [strongSelf.imageView startAnimating];
+//            } else {
+//                strongSelf.imageView.image = image;
+//            }
+//        }
+//    }];
+    
+    [self.imageView setImageWithURL:gifUrl progressBlock:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
         NSLog(@"expectedSize:%ld, receivedSize:%ld, targetURL:%@", expectedSize, receivedSize, targetURL.absoluteString);
-    } completion:^(UIImage * _Nullable image, NSError * _Nullable error) {
+    } completionBlock:^(UIImage * _Nullable image, NSError * _Nullable error) {
         __strong typeof (weakSelf) strongSelf = weakSelf;
         if (strongSelf && image) {
             if (image.imageFormat == JImageFormatGIF) {
@@ -162,8 +181,10 @@ static NSString *gifUrl = @"https://user-gold-cdn.xitu.io/2019/3/27/169bce612ee4
                 strongSelf.imageView.image = image;
             }
         }
-
     }];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self.imageView cancelLoadImage];
+    });
 }
 
 - (void)resetImage {
@@ -193,10 +214,12 @@ static NSString *gifUrl = @"https://user-gold-cdn.xitu.io/2019/3/27/169bce612ee4
 
 - (void)yy_load {
     [self.yyImageView yy_setImageWithURL:[NSURL URLWithString:gifUrl] options:YYWebImageOptionProgressive];
+    [self.yyImageView yy_cancelCurrentImageRequest];
 }
 
 - (void)sd_load {
     [self.sdImageView sd_setImageWithURL:[NSURL URLWithString:gifUrl]];
+    [self.sdImageView sd_cancelCurrentImageLoad];
 }
 
 

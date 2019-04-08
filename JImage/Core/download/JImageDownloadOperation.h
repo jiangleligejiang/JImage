@@ -18,6 +18,8 @@ typedef void(^JImageDownloadCompletionBlock)(NSData *_Nullable imageData, NSErro
 
 - (id)addProgressHandler:(JImageDownloadProgressBlock)progressBlock withCompletionBlock:(JImageDownloadCompletionBlock)completionBlock;
 
+- (BOOL)cancelWithToken:(id)token;
+
 @end
 
 NS_ASSUME_NONNULL_END

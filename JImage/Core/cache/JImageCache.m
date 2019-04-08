@@ -84,12 +84,17 @@
     dispatch_async(self.ioQueue, storeBlock);
 }
 
-- (void)queryImageForKey:(NSString *)key cacheType:(JImageCacheType)cacheType completion:(void (^)(UIImage * _Nullable, JImageCacheType))completionBlock {
+- (NSOperation *)queryImageForKey:(NSString *)key cacheType:(JImageCacheType)cacheType completion:(void (^)(UIImage * _Nullable, JImageCacheType))completionBlock {
     if (!key || key.length == 0) {
         SAFE_CALL_BLOCK(completionBlock, nil, JImageCacheTypeNone);
-        return;
+        return nil;
     }
+    NSOperation *operation = [NSOperation new];
     void(^queryBlock)(void) = ^ {
+        if (operation.isCancelled) {
+            NSLog(@"cancel cache query for key: %@", key ? : @"");
+            return;
+        }
         UIImage *image = nil;
         JImageCacheType cacheFrom = cacheType;
         if (cacheType == JImageCacheTypeMemory) {
@@ -114,6 +119,7 @@
         SAFE_CALL_BLOCK(completionBlock, image, cacheFrom);
     };
     dispatch_async(self.ioQueue, queryBlock);
+    return operation;
 }
 
 - (void)containImageWithKey:(NSString *)key cacheType:(JImageCacheType)cacheType completion:(void (^)(BOOL))completionBlock {
