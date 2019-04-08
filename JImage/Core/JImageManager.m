@@ -31,25 +31,6 @@
     self.imageCache = [[JImageCache alloc] init];
 }
 
-- (void)loadImageWithUrl:(NSString *)url complection:(void (^)(UIImage * _Nullable, NSError * _Nullable))completionBlock {
-    [self.imageCache queryImageForKey:url cacheType:JImageCacheTypeAll completion:^(UIImage * _Nullable image, JImageCacheType cacheType) {
-        if (image) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                completionBlock(image, nil);
-            });
-            NSLog(@"fetch image from %@", (cacheType == JImageCacheTypeMemory) ? @"memory" : @"disk");
-            return;
-        }
-        
-        [[JImageDownloader shareInstance] fetchImageWithURL:url completion:^(UIImage * _Nullable image, NSData *_Nullable data, NSError * _Nullable error) {
-            [self.imageCache storeImage:image imageData:data forKey:url completion:nil];
-            dispatch_async(dispatch_get_main_queue(), ^{
-                completionBlock(image, error);
-            });
-        }];
-    }];
-}
-
 - (void)loadImageWithUrl:(NSString *)url progress:(JImageProgressBlock)progressBlock completion:(JImageCompletionBlock)completionBlock {
     [self.imageCache queryImageForKey:url cacheType:JImageCacheTypeAll completion:^(UIImage * _Nullable image, JImageCacheType cacheType) {
         if (image) {

@@ -38,21 +38,6 @@
     self.URLsLock = dispatch_semaphore_create(1);
 }
 
-- (void)fetchImageWithURL:(NSString *)url completion:(void (^)(UIImage * _Nullable, NSData * _Nullable data, NSError * _Nullable))completionBlock {
-    if (!url || url.length == 0) {
-        return;
-    }
-    
-    NSURL *URL = [NSURL URLWithString:url];
-    if (!URL) {
-        return;
-    }
-    
-    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
-    id<JImageOperation> operation = [[JImageDownloadOperation alloc] initWithRequest:request];
-    [self.operationQueue addOperation:operation];
-}
-
 - (void)fetchImageWithURL:(NSString *)url progressBlock:(JImageDownloadProgressBlock)progressBlock completionBlock:(JImageDownloadCompletionBlock)completionBlock {
     if (!url || url.length == 0) {
         return;

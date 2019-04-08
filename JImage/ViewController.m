@@ -148,20 +148,6 @@ static NSString *gifUrl = @"https://user-gold-cdn.xitu.io/2019/3/27/169bce612ee4
     config.maxCacheAge = 60;
     [[JImageManager shareManager] setCacheConfig:config];
     
-//    [[JImageManager shareManager] loadImageWithUrl:gifUrl complection:^(UIImage * _Nullable image, NSError * _Nullable error) {
-//        __strong typeof (weakSelf) strongSelf = weakSelf;
-//        if (strongSelf && image) {
-//            if (image.imageFormat == JImageFormatGIF) {
-//                strongSelf.imageView.animationImages = image.images;
-//                strongSelf.imageView.animationDuration = image.totalTimes;
-//                strongSelf.imageView.animationRepeatCount = image.loopCount;
-//                [strongSelf.imageView startAnimating];
-//            } else {
-//                strongSelf.imageView.image = image;
-//            }
-//        }
-//    }];
-    
     [[JImageManager shareManager] loadImageWithUrl:gifUrl progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
         NSLog(@"expectedSize:%ld, receivedSize:%ld, targetURL:%@", expectedSize, receivedSize, targetURL.absoluteString);
     } completion:^(UIImage * _Nullable image, NSError * _Nullable error) {
