@@ -6,3 +6,5 @@
 - [实现GIF图片的加载](https://juejin.im/post/5c9b3e3d518825303c705dd2#heading-5)
 
 - [实现缓存架构](https://juejin.im/post/5ca5eb7be51d456fb44cf33a)
+
+- [实现进度回调和取消加载功能](https://juejin.im/post/5cb5c042e51d456e770bdcb1#heading-10)
