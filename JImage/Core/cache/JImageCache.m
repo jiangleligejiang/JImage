@@ -66,7 +66,9 @@
                 [self.memoryCache setObject:image forKey:key cost:image.memoryCost];
             } else if (imageData) {
                 UIImage *decodedImage = [[JImageCoder shareCoder] decodeImageSyncWithData:imageData];
-                [self.memoryCache setObject:decodedImage forKey:key cost:decodedImage.memoryCost];
+                if (decodedImage) {
+                    [self.memoryCache setObject:decodedImage forKey:key cost:decodedImage.memoryCost];
+                }
             }
         }
         if (self.cacheConfig.shouldCacheImagesInDisk) {
@@ -112,7 +114,9 @@
                 if (data) {
                     cacheFrom = JImageCacheTypeDisk;
                     image = [[JImageCoder shareCoder] decodeImageSyncWithData:data];
-                    [self.memoryCache setObject:image forKey:key cost:image.memoryCost];
+                    if (image) {
+                        [self.memoryCache setObject:image forKey:key cost:image.memoryCost];
+                    }
                 }
             }
         }

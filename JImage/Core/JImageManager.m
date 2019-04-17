@@ -70,7 +70,11 @@
             return;
         }
         
-        JImageDownloadToken *downloadToken = [[JImageDownloader shareInstance] fetchImageWithURL:url progressBlock:progressBlock completionBlock:^(NSData * _Nullable imageData, NSError * _Nullable error, BOOL finished) {
+        JImageDownloadToken *downloadToken = [[JImageDownloader shareInstance] fetchImageWithURL:url progressBlock:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                SAFE_CALL_BLOCK(progressBlock, receivedSize, expectedSize, targetURL);
+            });
+        } completionBlock:^(NSData * _Nullable imageData, NSError * _Nullable error, BOOL finished) {
             if (!imageData || error) {
                 dispatch_async(dispatch_get_main_queue(), ^{
                     SAFE_CALL_BLOCK(completionBlock, nil, error);

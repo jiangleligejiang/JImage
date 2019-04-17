@@ -11,7 +11,7 @@
 #import "objc/runtime.h"
 
 static char kJImageOperation;
-typedef NSMapTable<NSString *, id<JImageOperation>> JOperationDictionay;
+typedef NSMutableDictionary<NSString *, id<JImageOperation>> JOperationDictionay;
 
 @implementation UIView (JImageOperation)
 
@@ -21,7 +21,7 @@ typedef NSMapTable<NSString *, id<JImageOperation>> JOperationDictionay;
         if (operationDict) {
             return operationDict;
         }
-        operationDict = [[NSMapTable alloc] initWithKeyOptions:NSPointerFunctionsStrongMemory valueOptions:NSPointerFunctionsWeakMemory capacity:0];
+        operationDict = [[NSMutableDictionary alloc] init];
         objc_setAssociatedObject(self, &kJImageOperation, operationDict, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
         return operationDict;
     }
@@ -29,7 +29,7 @@ typedef NSMapTable<NSString *, id<JImageOperation>> JOperationDictionay;
 
 - (void)setOperation:(id<JImageOperation>)operation forKey:(NSString *)key {
     if (key) {
-        [self cancelOperationForKey:key];
+        [self cancelOperationForKey:key]; //先取消当前任务，再重新设置加载任务
         if (operation) {
             JOperationDictionay *operationDict = [self operationDictionary];
             @synchronized (self) {
@@ -46,7 +46,7 @@ typedef NSMapTable<NSString *, id<JImageOperation>> JOperationDictionay;
         @synchronized (self) {
             operation = [operationDict objectForKey:key];
         }
-        if (operation && [operation conformsToProtocol:@protocol(JImageOperation)]) {
+        if (operation && [operation conformsToProtocol:@protocol(JImageOperation)]) {//判断当前operation是否实现了JImageOperation协议
             [operation cancelOperation];
         }
         @synchronized (self) {
