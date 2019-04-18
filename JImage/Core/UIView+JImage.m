@@ -20,7 +20,7 @@
         [self internalSetImage:placeHolder];
     });
     __weak typeof(self) weakSelf = self;
-    id<JImageOperation> operation = [[JImageManager shareManager] loadImageWithUrl:url options:options progress:progressBlock transform:transformBlock completion:^(UIImage * _Nullable image, NSError * _Nullable error) {
+    id<JImageOperation> operation = [[JImageManager shareManager] loadImageWithUrl:url options:options progress:progressBlock transform:transformBlock completion:^(UIImage * _Nullable image, NSError * _Nullable error, BOOL finished) {
         if (error) {
             NSLog(@"JImage Error:set image fail with url:%@, error:%@", url ? : @"", error.description ? : @"unknown");
         } else if (image) {
@@ -28,9 +28,11 @@
                 [weakSelf internalSetImage:image];
             }
         } else {
-            NSLog(@"JImage Error:image is nil");
+            if (finished) {
+                NSLog(@"JImage Error:image is nil");
+            }
         }
-        completionBlock(image, error);
+        completionBlock(image, error, finished);
     }];
     [self setOperation:operation forKey:NSStringFromClass([self class])];
 }
@@ -49,13 +51,15 @@
     });
     
     __weak typeof(self) weakSelf = self;
-    id<JImageOperation> operation = [[JImageManager shareManager] loadImageWithUrl:url options:options progress:nil transform:nil completion:^(UIImage * _Nullable image, NSError * _Nullable error) {
+    id<JImageOperation> operation = [[JImageManager shareManager] loadImageWithUrl:url options:options progress:nil transform:nil completion:^(UIImage * _Nullable image, NSError * _Nullable error, BOOL finished) {
         if (error) {
             NSLog(@"JImage Error:set image fail with url:%@, error:%@", url ? : @"" , error.description ? : @"");
         } else if (image) {
             [weakSelf internalSetImage:image];
         } else {
-            NSLog(@"JImage Error:image is nil");
+            if (finished) {
+                NSLog(@"JImage Error:image is nil");
+            }
         }
     }];
     [self setOperation:operation forKey:NSStringFromClass([self class])];

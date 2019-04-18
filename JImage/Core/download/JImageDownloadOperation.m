@@ -7,6 +7,7 @@
 //
 
 #import "JImageDownloadOperation.h"
+#import "JImageProgressiveCoder.h"
 
 #define LOCK(lock) dispatch_semaphore_wait(lock, DISPATCH_TIME_FOREVER);
 #define UNLOCK(lock) dispatch_semaphore_signal(lock);
@@ -16,6 +17,7 @@ static NSString *const kImageCompletionCallback = @"kImageCompletionCallback";
 
 @interface JImageDownloadOperation() <NSURLSessionDataDelegate, NSURLSessionTaskDelegate>
 @property (nonatomic, strong) NSURLRequest *request;
+@property (nonatomic, assign) NSUInteger options;
 @property (nonatomic, strong) NSURLSession *session;
 @property (nonatomic, strong) NSURLSessionDataTask *dataTask;
 @property (nonatomic, strong) NSMutableArray *callbackBlocks;
@@ -23,14 +25,16 @@ static NSString *const kImageCompletionCallback = @"kImageCompletionCallback";
 @property (nonatomic, assign, getter=isFinished) BOOL finished;
 @property (nonatomic, assign) NSInteger expectedSize;
 @property (nonatomic, strong) NSMutableData *imageData;
+@property (nonatomic, strong) JImageProgressiveCoder *progressiveCoder;
 @end
 
 @implementation JImageDownloadOperation
 @synthesize finished = _finished;
 
-- (instancetype)initWithRequest:(NSURLRequest *)request {
+- (instancetype)initWithRequest:(NSURLRequest *)request options:(JImageOptions)options{
     if (self = [super init]) {
         self.request = request;
+        self.options = options;
         self.callbackBlocks = [NSMutableArray new];
         self.callbacksLock = dispatch_semaphore_create(1);
     }
@@ -137,12 +141,26 @@ static NSString *const kImageCompletionCallback = @"kImageCompletionCallback";
     for (JImageDownloadProgressBlock progressBlock in [self callbacksForKey:kImageProgressCallback]) {
         progressBlock(self.imageData.length, self.expectedSize, self.request.URL);
     }
+    
+    if (self.expectedSize > 0 && (self.options & JImageOptionProgressive)) {
+        if (!self.progressiveCoder) {
+            self.progressiveCoder = [[JImageProgressiveCoder alloc] init];
+        }
+
+        NSData *imageData = [self.imageData copy];
+        NSInteger totalSize = imageData.length;
+        BOOL finished = totalSize >= self.expectedSize;
+        UIImage *image = [self.progressiveCoder progressiveDecodedImageWithData:imageData finished:finished];
+        for (JImageDownloadCompletionBlock block in [self callbacksForKey:kImageCompletionCallback]) {
+            block(image ,nil, nil, finished);
+        }
+    }
 }
 
 #pragma mark - NSURLSessionTaskDelgate
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error {
     for (JImageDownloadCompletionBlock completionBlock in [self callbacksForKey:kImageCompletionCallback]) {
-        completionBlock([self.imageData copy], error, YES);
+        completionBlock(nil, [self.imageData copy], error, YES);
     }
     [self done];
 }

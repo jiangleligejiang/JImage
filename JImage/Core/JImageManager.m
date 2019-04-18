@@ -68,9 +68,9 @@
         combineOperation.cacheOperation =  [self.imageCache queryImageForKey:url cacheType:JImageCacheTypeAll completion:^(UIImage * _Nullable image, JImageCacheType cacheType) {
             if (image) {
                 safe_dispatch_main_async(^{
-                    SAFE_CALL_BLOCK(completionBlock, image, nil);
+                    SAFE_CALL_BLOCK(completionBlock, image, nil, YES);
                 });
-                NSLog(@"JImage Error:fetch image from %@", (cacheType == JImageCacheTypeMemory) ? @"memory" : @"disk");
+                NSLog(@"fetch image from %@", (cacheType == JImageCacheTypeMemory) ? @"memory" : @"disk");
             } else {
                 combineOperation.downloadToken = [self fetchImageWithUrl:url options:options progressBlock:progressBlock transformBlock:transformBlock completionBlock:completionBlock];
             }
@@ -81,28 +81,37 @@
 
 - (JImageDownloadToken *)fetchImageWithUrl:(NSString *)url options:(JImageOptions)options progressBlock:(JImageProgressBlock)progressBlock transformBlock:(JImageTransformBlock)transformBlock completionBlock:(JImageCompletionBlock)completionBlock {
     __weak typeof(self) weakSelf = self;
-    JImageDownloadToken *downloadToken = [[JImageDownloader shareInstance] fetchImageWithURL:url progressBlock:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
+    JImageDownloadToken *downloadToken = [[JImageDownloader shareInstance] fetchImageWithURL:url options:options progressBlock:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
         safe_dispatch_main_async(^{
             SAFE_CALL_BLOCK(progressBlock, receivedSize, expectedSize, targetURL);
         });
-    } completionBlock:^(NSData * _Nullable imageData, NSError * _Nullable error, BOOL finished) {
-        if (!imageData || error) {
+    } completionBlock:^(UIImage *_Nullable image, NSData * _Nullable imageData, NSError * _Nullable error, BOOL finished) {
+        if (!finished) {
             safe_dispatch_main_async(^{
-                SAFE_CALL_BLOCK(completionBlock, nil, error);
+                SAFE_CALL_BLOCK(completionBlock, image, error, NO);
             });
-            return;
-        }
-        [[JImageCoder shareCoder] decodeImageWithData:imageData WithBlock:^(UIImage * _Nullable image) {
-            __strong typeof(weakSelf) strongSelf = weakSelf;
-            UIImage *transformImage = image;
-            if (transformBlock) {
-                transformImage = transformBlock(image, url);
+        } else {
+            if (!imageData || error) {
+                safe_dispatch_main_async(^{
+                    SAFE_CALL_BLOCK(completionBlock, nil, error, YES);
+                });
+                return;
             }
-            [strongSelf.imageCache storeImage:transformImage imageData:imageData forKey:url completion:nil];
-            safe_dispatch_main_async(^{
-                SAFE_CALL_BLOCK(completionBlock, transformImage, nil);
-            });
-        }];
+            [[JImageCoder shareCoder] decodeImageWithData:imageData WithBlock:^(UIImage * _Nullable image) {
+                __strong typeof(weakSelf) strongSelf = weakSelf;
+                UIImage *transformImage = image;
+                NSData *cacheData = imageData;
+                if (transformBlock) {
+                    transformImage = transformBlock(image, url);
+                    BOOL imageWasTransformed = ![transformImage isEqual:image];
+                    cacheData = imageWasTransformed ? nil : imageData;
+                }
+                [strongSelf.imageCache storeImage:transformImage imageData:cacheData forKey:url completion:nil];
+                safe_dispatch_main_async(^{
+                    SAFE_CALL_BLOCK(completionBlock, transformImage, nil, YES);
+                });
+            }];
+        }
     }];
     return downloadToken;
 }

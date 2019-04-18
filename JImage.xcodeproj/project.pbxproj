@@ -16,6 +16,8 @@
 		A11444BE2244C51900A9DFD7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A11444BD2244C51900A9DFD7 /* main.m */; };
 		A11444C82244C51A00A9DFD7 /* JImageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A11444C72244C51A00A9DFD7 /* JImageTests.m */; };
 		A11444D32244C51A00A9DFD7 /* JImageUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = A11444D22244C51A00A9DFD7 /* JImageUITests.m */; };
+		A1250D912268752B00D9F7A3 /* JImageProgressiveCoder.m in Sources */ = {isa = PBXBuildFile; fileRef = A1250D902268752B00D9F7A3 /* JImageProgressiveCoder.m */; };
+		A1250D942268792000D9F7A3 /* JImageCoderHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = A1250D932268792000D9F7A3 /* JImageCoderHelper.m */; };
 		A145A8B92252F9C700A6BD97 /* JDiskCache.m in Sources */ = {isa = PBXBuildFile; fileRef = A145A8B82252F9C700A6BD97 /* JDiskCache.m */; };
 		A145A8BC2252F9DA00A6BD97 /* JImageCache.m in Sources */ = {isa = PBXBuildFile; fileRef = A145A8BB2252F9DA00A6BD97 /* JImageCache.m */; };
 		A145A8BF2253061900A6BD97 /* JImageCacheConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = A145A8BE2253061900A6BD97 /* JImageCacheConfig.m */; };
@@ -73,6 +75,10 @@
 		A11444D22244C51A00A9DFD7 /* JImageUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JImageUITests.m; sourceTree = "<group>"; };
 		A11444D42244C51A00A9DFD7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A1250D8E2268550100D9F7A3 /* JImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JImage.h; sourceTree = "<group>"; };
+		A1250D8F2268752B00D9F7A3 /* JImageProgressiveCoder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JImageProgressiveCoder.h; sourceTree = "<group>"; };
+		A1250D902268752B00D9F7A3 /* JImageProgressiveCoder.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JImageProgressiveCoder.m; sourceTree = "<group>"; };
+		A1250D922268792000D9F7A3 /* JImageCoderHelper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JImageCoderHelper.h; sourceTree = "<group>"; };
+		A1250D932268792000D9F7A3 /* JImageCoderHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JImageCoderHelper.m; sourceTree = "<group>"; };
 		A145A8B72252F9C700A6BD97 /* JDiskCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JDiskCache.h; sourceTree = "<group>"; };
 		A145A8B82252F9C700A6BD97 /* JDiskCache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JDiskCache.m; sourceTree = "<group>"; };
 		A145A8BA2252F9DA00A6BD97 /* JImageCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JImageCache.h; sourceTree = "<group>"; };
@@ -147,6 +153,10 @@
 			children = (
 				A1E5CBE2224B1C4900A1789C /* JImageCoder.h */,
 				A1E5CBE3224B1C4900A1789C /* JImageCoder.m */,
+				A1250D8F2268752B00D9F7A3 /* JImageProgressiveCoder.h */,
+				A1250D902268752B00D9F7A3 /* JImageProgressiveCoder.m */,
+				A1250D922268792000D9F7A3 /* JImageCoderHelper.h */,
+				A1250D932268792000D9F7A3 /* JImageCoderHelper.m */,
 			);
 			path = coder;
 			sourceTree = "<group>";
@@ -482,7 +492,9 @@
 				A145A8BF2253061900A6BD97 /* JImageCacheConfig.m in Sources */,
 				A1A210412248D6C300A39089 /* JImageDownloader.m in Sources */,
 				A145A8BC2252F9DA00A6BD97 /* JImageCache.m in Sources */,
+				A1250D912268752B00D9F7A3 /* JImageProgressiveCoder.m in Sources */,
 				A1A210452248DBE200A39089 /* MBProgressHUD+JUtils.m in Sources */,
+				A1250D942268792000D9F7A3 /* JImageCoderHelper.m in Sources */,
 				A145A8B92252F9C700A6BD97 /* JDiskCache.m in Sources */,
 				A1E5CBE7224B216300A1789C /* UIImage+JImageFormat.m in Sources */,
 				A1E5CBE4224B1C4900A1789C /* JImageCoder.m in Sources */,

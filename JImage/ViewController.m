@@ -26,7 +26,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.imageView = [[UIImageView alloc] init];
-    self.imageView.backgroundColor = [UIColor lightGrayColor];
+    //self.imageView.backgroundColor = [UIColor lightGrayColor];
     self.imageView.contentMode = UIViewContentModeScaleAspectFit;
     [self.view addSubview:self.imageView];
     
@@ -79,13 +79,13 @@
     [self.yyImageView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerX.mas_equalTo(weakSelf.view.mas_centerX);
         make.top.mas_equalTo(weakSelf.view).offset(80);
-        make.size.mas_equalTo(CGSizeMake(100, 100));
+        //make.size.mas_equalTo(CGSizeMake(100, 100));
     }];
     
     [self.sdImageView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerX.mas_equalTo(weakSelf.view.mas_centerX);
         make.top.mas_equalTo(weakSelf.yyImageView.mas_bottom).offset(20);
-        make.size.mas_equalTo(CGSizeMake(314, 145));
+        //make.size.mas_equalTo(CGSizeMake(314, 145));
     }];
     
     [self.imageView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -145,7 +145,7 @@
 //static NSString *gifUrl = @"https://user-gold-cdn.xitu.io/2019/3/27/169bce612ee4dc21";
 static NSString *gifUrl = @"https://user-gold-cdn.xitu.io/2019/4/16/16a26049b33c9398";
 - (void)downloadImage {
-    NSString *imageUrl = @"https://user-gold-cdn.xitu.io/2019/4/18/16a2f697a18cf6af";
+    NSString *imageUrl = @"https://user-gold-cdn.xitu.io/2019/4/18/16a3024759afb5b5";
     __weak typeof(self) weakSelf = self;
     
     JImageCacheConfig *config = [[JImageCacheConfig alloc] init];
@@ -173,7 +173,7 @@ static NSString *gifUrl = @"https://user-gold-cdn.xitu.io/2019/4/16/16a26049b33c
 //    hud.bezelView.backgroundColor = [UIColor clearColor];
 //    hud.mode = MBProgressHUDModeDeterminateHorizontalBar;
 //    
-    [self.imageView setImageWithURL:imageUrl options:(JImageOptionIgnoreCache | JImageOptionAvoidAutoSetImage) progressBlock:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
+    [self.imageView setImageWithURL:imageUrl options:(JImageOptionAvoidAutoSetImage | JImageOptionProgressive) progressBlock:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
         CGFloat progress = (float)receivedSize / expectedSize;
         //hud.progress = progress;
         NSLog(@"expectedSize:%ld, receivedSize:%ld, targetURL:%@", expectedSize, receivedSize, targetURL.absoluteString);
@@ -181,7 +181,7 @@ static NSString *gifUrl = @"https://user-gold-cdn.xitu.io/2019/4/16/16a26049b33c
         if (image) {
             CGRect rect = CGRectMake(0, 0, image.size.width, image.size.height);
             UIGraphicsBeginImageContextWithOptions(image.size, NO, 0);
-            [[UIBezierPath bezierPathWithRoundedRect:rect cornerRadius:image.size.height / 2] addClip];
+            [[UIBezierPath bezierPathWithRoundedRect:rect cornerRadius:100] addClip];
             [image drawInRect:rect];
             UIImage *transformImage = UIGraphicsGetImageFromCurrentImageContext();
             UIGraphicsEndImageContext();
@@ -189,7 +189,7 @@ static NSString *gifUrl = @"https://user-gold-cdn.xitu.io/2019/4/16/16a26049b33c
         } else {
             return nil;
         }
-    } completionBlock:^(UIImage * _Nullable image, NSError * _Nullable error) {
+    } completionBlock:^(UIImage * _Nullable image, NSError * _Nullable error, BOOL finished) {
         //[hud hideAnimated:YES];
         __strong typeof (weakSelf) strongSelf = weakSelf;
         if (strongSelf && image) {

@@ -9,6 +9,7 @@
 
 #import "JImageCoder.h"
 #import <MobileCoreServices/MobileCoreServices.h>
+#import "JImageCoderHelper.h"
 static const NSTimeInterval kJAnimatedImageDelayTimeIntervalMinimum = 0.02;
 static const NSTimeInterval kJAnimatedImageDefaultDelayTimeInterval = 0.1;
 
@@ -132,7 +133,7 @@ FOUNDATION_EXTERN_INLINE BOOL JCGImageRefContainsAlpha(CGImageRef imageRef) {
 }
 
 - (UIImage *)decodeImageSyncWithData:(NSData *)data {
-    JImageFormat format = [self imageFormatWithData:data];
+    JImageFormat format = [JImageCoderHelper imageFormatWithData:data];
     switch (format) {
         case JImageFormatJPEG:
         case JImageFormatPNG:{
@@ -215,25 +216,6 @@ FOUNDATION_EXTERN_INLINE BOOL JCGImageRefContainsAlpha(CGImageRef imageRef) {
     }
     CFRelease(source);
     return animatedImage;
-}
-
-#pragma mark - util methods
-- (JImageFormat)imageFormatWithData:(NSData *)data {
-    if (!data) {
-        return JImageFormatUndefined;
-    }
-    uint8_t c;
-    [data getBytes:&c length:1];
-    switch (c) {
-        case 0xFF:
-            return JImageFormatJPEG;
-        case 0x89:
-            return JImageFormatPNG;
-        case 0x47:
-            return JImageFormatGIF;
-        default:
-            return JImageFormatUndefined;
-    }
 }
 
 @end

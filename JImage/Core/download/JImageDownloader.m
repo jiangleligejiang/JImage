@@ -38,7 +38,7 @@
     self.URLsLock = dispatch_semaphore_create(1);
 }
 
-- (JImageDownloadToken *)fetchImageWithURL:(NSString *)url progressBlock:(JImageDownloadProgressBlock)progressBlock completionBlock:(JImageDownloadCompletionBlock)completionBlock {
+- (JImageDownloadToken *)fetchImageWithURL:(NSString *)url options:(JImageOptions)options progressBlock:(JImageDownloadProgressBlock)progressBlock completionBlock:(JImageDownloadCompletionBlock)completionBlock {
     if (!url || url.length == 0) {
         return nil;
     }
@@ -52,7 +52,7 @@
     JImageDownloadOperation *operation = [self.URLOperations objectForKey:URL];
     if (!operation || operation.isCancelled || operation.isFinished) {
         NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
-        operation = [[JImageDownloadOperation alloc] initWithRequest:request];
+        operation = [[JImageDownloadOperation alloc] initWithRequest:request options:options];
         __weak typeof(self) weakSelf = self;
         operation.completionBlock = ^{
             __strong typeof(weakSelf) strongSelf = weakSelf;

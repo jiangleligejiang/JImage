@@ -22,6 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)shareInstance;
 
 - (nullable JImageDownloadToken *)fetchImageWithURL:(NSString *)url
+                                            options:(JImageOptions)options
                                       progressBlock:(nullable JImageDownloadProgressBlock)progressBlock
                                     completionBlock:(nullable JImageDownloadCompletionBlock)completionBlock;
 
