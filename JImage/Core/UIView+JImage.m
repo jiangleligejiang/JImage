@@ -11,31 +11,47 @@
 #import "UIImage+JImageFormat.h"
 @implementation UIView (JImage)
 
-- (void)setImageWithURL:(NSString *)url progressBlock:(JImageProgressBlock)progressBlock transformBlock:(JImageTransformBlock)transformBlock completionBlock:(JImageCompletionBlock)completionBlock {
-    [self setImageWithURL:url placeHolder:nil progressBlock:progressBlock transformBlock:transformBlock completionBlock:completionBlock];
+- (void)setImageWithURL:(NSString *)url options:(JImageOptions)options progressBlock:(JImageProgressBlock)progressBlock transformBlock:(JImageTransformBlock)transformBlock completionBlock:(JImageCompletionBlock)completionBlock {
+    [self setImageWithURL:url options:options placeHolder:nil progressBlock:progressBlock transformBlock:transformBlock completionBlock:completionBlock];
 }
 
-- (void)setImageWithURL:(NSString *)url placeHolder:(UIImage *)placeHolder progressBlock:(JImageProgressBlock)progressBlock transformBlock:(JImageTransformBlock)transformBlock completionBlock:(JImageCompletionBlock)completionBlock {
+- (void)setImageWithURL:(NSString *)url options:(JImageOptions)options placeHolder:(UIImage *)placeHolder progressBlock:(JImageProgressBlock)progressBlock transformBlock:(JImageTransformBlock)transformBlock completionBlock:(JImageCompletionBlock)completionBlock {
     safe_dispatch_main_async(^{
         [self internalSetImage:placeHolder];
     });
-    id<JImageOperation> operation = [[JImageManager shareManager] loadImageWithUrl:url progress:progressBlock transform:transformBlock completion:completionBlock];
+    __weak typeof(self) weakSelf = self;
+    id<JImageOperation> operation = [[JImageManager shareManager] loadImageWithUrl:url options:options progress:progressBlock transform:transformBlock completion:^(UIImage * _Nullable image, NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"JImage Error:set image fail with url:%@, error:%@", url ? : @"", error.description ? : @"unknown");
+        } else if (image) {
+            if (!(options & JImageOptionAvoidAutoSetImage)) {
+                [weakSelf internalSetImage:image];
+            }
+        } else {
+            NSLog(@"JImage Error:image is nil");
+        }
+        completionBlock(image, error);
+    }];
     [self setOperation:operation forKey:NSStringFromClass([self class])];
 }
 
 - (void)setImageWithURL:(NSString *)url {
-    [self setImageWithURL:url placeHolder:nil];
+    [self setImageWithURL:url options:0];
 }
 
-- (void)setImageWithURL:(NSString *)url placeHolder:(UIImage *)placeHolder {
+- (void)setImageWithURL:(NSString *)url options:(JImageOptions)options {
+    [self setImageWithURL:url options:options placeHolder:nil];
+}
+
+- (void)setImageWithURL:(NSString *)url options:(JImageOptions)options placeHolder:(UIImage *)placeHolder {
     safe_dispatch_main_async(^{
         [self internalSetImage:placeHolder];
     });
     
     __weak typeof(self) weakSelf = self;
-    id<JImageOperation> operation = [[JImageManager shareManager] loadImageWithUrl:url progress:nil transform:nil completion:^(UIImage * _Nullable image, NSError * _Nullable error) {
+    id<JImageOperation> operation = [[JImageManager shareManager] loadImageWithUrl:url options:options progress:nil transform:nil completion:^(UIImage * _Nullable image, NSError * _Nullable error) {
         if (error) {
-            NSLog(@"JImage Error:set image fail with url:%@, error:%@", url, error.description ? : @"");
+            NSLog(@"JImage Error:set image fail with url:%@, error:%@", url ? : @"" , error.description ? : @"");
         } else if (image) {
             [weakSelf internalSetImage:image];
         } else {

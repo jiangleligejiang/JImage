@@ -173,7 +173,7 @@ static NSString *gifUrl = @"https://user-gold-cdn.xitu.io/2019/4/16/16a26049b33c
 //    hud.bezelView.backgroundColor = [UIColor clearColor];
 //    hud.mode = MBProgressHUDModeDeterminateHorizontalBar;
 //    
-    [self.imageView setImageWithURL:imageUrl progressBlock:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
+    [self.imageView setImageWithURL:imageUrl options:(JImageOptionIgnoreCache | JImageOptionAvoidAutoSetImage) progressBlock:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
         CGFloat progress = (float)receivedSize / expectedSize;
         //hud.progress = progress;
         NSLog(@"expectedSize:%ld, receivedSize:%ld, targetURL:%@", expectedSize, receivedSize, targetURL.absoluteString);
