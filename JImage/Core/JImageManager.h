@@ -15,11 +15,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 typedef void(^JImageProgressBlock)(NSInteger receivedSize, NSInteger expectedSize, NSURL *_Nullable targetURL);
 typedef void(^JImageCompletionBlock)(UIImage * _Nullable image, NSError * _Nullable error);
+typedef UIImage *_Nullable(^JImageTransformBlock)(UIImage *image, NSString *_Nullable url);
 @interface JImageManager : NSObject
 
 + (instancetype)shareManager;
 
-- (id<JImageOperation>)loadImageWithUrl:(NSString *)url progress:(nullable JImageProgressBlock)progressBlock completion:(nullable JImageCompletionBlock)completionBlock;
+- (id<JImageOperation>)loadImageWithUrl:(NSString *)url
+                               progress:(nullable JImageProgressBlock)progressBlock
+                              transform:(nullable JImageTransformBlock)transformBlock
+                             completion:(nullable JImageCompletionBlock)completionBlock;
 
 - (void)setCacheConfig:(JImageCacheConfig *)cacheConfig;
 

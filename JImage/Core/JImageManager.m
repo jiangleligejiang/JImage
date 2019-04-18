@@ -11,6 +11,7 @@
 #import "JImageDownloader.h"
 #import "JImageCoder.h"
 #import "JImageOperation.h"
+#import "JImage.h"
 
 #define SAFE_CALL_BLOCK(blockFunc, ...)    \
     if (blockFunc) {                        \
@@ -58,33 +59,39 @@
     self.imageCache = [[JImageCache alloc] init];
 }
 
-- (id<JImageOperation>)loadImageWithUrl:(NSString *)url progress:(JImageProgressBlock)progressBlock completion:(JImageCompletionBlock)completionBlock {
+- (id<JImageOperation>)loadImageWithUrl:(NSString *)url progress:(JImageProgressBlock)progressBlock transform:(JImageTransformBlock)transformBlock completion:(JImageCompletionBlock)completionBlock {
     __block JImageCombineOperation *combineOperation = [JImageCombineOperation new];
     combineOperation.url = url;
     combineOperation.cacheOperation =  [self.imageCache queryImageForKey:url cacheType:JImageCacheTypeAll completion:^(UIImage * _Nullable image, JImageCacheType cacheType) {
         if (image) {
-            dispatch_async(dispatch_get_main_queue(), ^{
+            safe_dispatch_main_async(^{
                 SAFE_CALL_BLOCK(completionBlock, image, nil);
             });
-            NSLog(@"fetch image from %@", (cacheType == JImageCacheTypeMemory) ? @"memory" : @"disk");
+            NSLog(@"JImage Error:fetch image from %@", (cacheType == JImageCacheTypeMemory) ? @"memory" : @"disk");
             return;
         }
         
+        __weak typeof(self) weakSelf = self;
         JImageDownloadToken *downloadToken = [[JImageDownloader shareInstance] fetchImageWithURL:url progressBlock:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
-            dispatch_async(dispatch_get_main_queue(), ^{
+            safe_dispatch_main_async(^{
                 SAFE_CALL_BLOCK(progressBlock, receivedSize, expectedSize, targetURL);
             });
         } completionBlock:^(NSData * _Nullable imageData, NSError * _Nullable error, BOOL finished) {
             if (!imageData || error) {
-                dispatch_async(dispatch_get_main_queue(), ^{
+                safe_dispatch_main_async(^{
                     SAFE_CALL_BLOCK(completionBlock, nil, error);
                 });
                 return;
             }
             [[JImageCoder shareCoder] decodeImageWithData:imageData WithBlock:^(UIImage * _Nullable image) {
-                [self.imageCache storeImage:image imageData:imageData forKey:url completion:nil];
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    SAFE_CALL_BLOCK(completionBlock, image, nil);
+                __strong typeof(weakSelf) strongSelf = weakSelf;
+                UIImage *transformImage = image;
+                if (transformBlock) {
+                    transformImage = transformBlock(image, url);
+                }
+                [strongSelf.imageCache storeImage:transformImage imageData:imageData forKey:url completion:nil];
+                safe_dispatch_main_async(^{
+                    SAFE_CALL_BLOCK(completionBlock, transformImage, nil);
                 });
             }];
         }];
