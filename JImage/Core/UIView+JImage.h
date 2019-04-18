@@ -2,7 +2,7 @@
 //  UIView+JImage.h
 //  JImage
 //
-//  Created by 刘强 on 2019/4/7.
+//  Created by jams on 2019/4/7.
 //  Copyright © 2019 jams. All rights reserved.
 //
 
@@ -17,7 +17,14 @@ NS_ASSUME_NONNULL_BEGIN
           progressBlock:(JImageProgressBlock)progressBlock
         completionBlock:(JImageCompletionBlock)completionBlock;
 
+- (void)setImageWithURL:(NSString *)url
+            placeHolder:(UIImage *_Nullable)placeHolder
+          progressBlock:(JImageProgressBlock)progressBlock
+        completionBlock:(JImageCompletionBlock)completionBlock;
+
 - (void)setImageWithURL:(NSString *)url;
+
+- (void)setImageWithURL:(NSString *)url placeHolder:(UIImage * _Nullable)placeHolder;
 
 - (void)cancelLoadImage;
 

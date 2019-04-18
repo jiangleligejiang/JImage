@@ -72,6 +72,7 @@
 		A11444CE2244C51A00A9DFD7 /* JImageUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JImageUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A11444D22244C51A00A9DFD7 /* JImageUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JImageUITests.m; sourceTree = "<group>"; };
 		A11444D42244C51A00A9DFD7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A1250D8E2268550100D9F7A3 /* JImage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JImage.h; sourceTree = "<group>"; };
 		A145A8B72252F9C700A6BD97 /* JDiskCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JDiskCache.h; sourceTree = "<group>"; };
 		A145A8B82252F9C700A6BD97 /* JDiskCache.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JDiskCache.m; sourceTree = "<group>"; };
 		A145A8BA2252F9DA00A6BD97 /* JImageCache.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JImageCache.h; sourceTree = "<group>"; };
@@ -233,6 +234,7 @@
 				A1CBB3B8225398AA008DE4AC /* JImageManager.m */,
 				A1C4C3D722599EA3002DC985 /* UIView+JImage.h */,
 				A1C4C3D822599EA3002DC985 /* UIView+JImage.m */,
+				A1250D8E2268550100D9F7A3 /* JImage.h */,
 			);
 			path = Core;
 			sourceTree = "<group>";

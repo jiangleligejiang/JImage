@@ -27,7 +27,7 @@
     [super viewDidLoad];
     self.imageView = [[UIImageView alloc] init];
     self.imageView.backgroundColor = [UIColor lightGrayColor];
-    self.imageView.contentMode = UIViewContentModeScaleAspectFit;
+    self.imageView.contentMode = UIViewContentModeScaleToFill;
     [self.view addSubview:self.imageView];
     
     self.yyImageView = [[YYAnimatedImageView alloc] init];
@@ -85,7 +85,7 @@
     [self.sdImageView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerX.mas_equalTo(weakSelf.view.mas_centerX);
         make.top.mas_equalTo(weakSelf.yyImageView.mas_bottom).offset(20);
-        make.size.mas_equalTo(CGSizeMake(100, 100));
+        make.size.mas_equalTo(CGSizeMake(314, 145));
     }];
     
     [self.imageView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -168,32 +168,34 @@ static NSString *gifUrl = @"https://user-gold-cdn.xitu.io/2019/4/16/16a26049b33c
 //        }
 //    }];
     
-    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.imageView animated:YES];
-    hud.bezelView.style = MBProgressHUDBackgroundStyleSolidColor;
-    hud.bezelView.backgroundColor = [UIColor clearColor];
-    hud.mode = MBProgressHUDModeDeterminateHorizontalBar;
-    
-    [self.imageView setImageWithURL:gifUrl progressBlock:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
-        CGFloat progress = (float)receivedSize / expectedSize;
-        hud.progress = progress;
-        NSLog(@"expectedSize:%ld, receivedSize:%ld, targetURL:%@", expectedSize, receivedSize, targetURL.absoluteString);
-    } completionBlock:^(UIImage * _Nullable image, NSError * _Nullable error) {
-        [hud hideAnimated:YES];
-        __strong typeof (weakSelf) strongSelf = weakSelf;
-        if (strongSelf && image) {
-            if (image.imageFormat == JImageFormatGIF) {
-                strongSelf.imageView.animationImages = image.images;
-                strongSelf.imageView.animationDuration = image.totalTimes;
-                strongSelf.imageView.animationRepeatCount = image.loopCount;
-                [strongSelf.imageView startAnimating];
-            } else {
-                strongSelf.imageView.image = image;
-            }
-        }
-    }];
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self.imageView cancelLoadImage];
-    });
+//    MBProgressHUD *hud = [MBProgressHUD showHUDAddedTo:self.imageView animated:YES];
+//    hud.bezelView.style = MBProgressHUDBackgroundStyleSolidColor;
+//    hud.bezelView.backgroundColor = [UIColor clearColor];
+//    hud.mode = MBProgressHUDModeDeterminateHorizontalBar;
+//    
+//    [self.imageView setImageWithURL:gifUrl progressBlock:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
+//        CGFloat progress = (float)receivedSize / expectedSize;
+//        hud.progress = progress;
+//        NSLog(@"expectedSize:%ld, receivedSize:%ld, targetURL:%@", expectedSize, receivedSize, targetURL.absoluteString);
+//    } completionBlock:^(UIImage * _Nullable image, NSError * _Nullable error) {
+//        [hud hideAnimated:YES];
+//        __strong typeof (weakSelf) strongSelf = weakSelf;
+//        if (strongSelf && image) {
+//            if (image.imageFormat == JImageFormatGIF) {
+//                strongSelf.imageView.animationImages = image.images;
+//                strongSelf.imageView.animationDuration = image.totalTimes;
+//                strongSelf.imageView.animationRepeatCount = image.loopCount;
+//                [strongSelf.imageView startAnimating];
+//            } else {
+//                strongSelf.imageView.image = image;
+//            }
+//        }
+//    }];
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//        [self.imageView cancelLoadImage];
+//    });
+    UIImage *placeHolder = [UIImage imageNamed:@"example"];
+    [self.imageView setImageWithURL:gifUrl placeHolder:placeHolder];
     //[self.imageView setImageWithURL:gifUrl];
     
 }
@@ -229,7 +231,8 @@ static NSString *gifUrl = @"https://user-gold-cdn.xitu.io/2019/4/16/16a26049b33c
 }
 
 - (void)sd_load {
-    [self.sdImageView sd_setImageWithURL:[NSURL URLWithString:gifUrl]];
+    //[self.sdImageView sd_setImageWithURL:[NSURL URLWithString:gifUrl]];
+    [self.sdImageView sd_setImageWithURL:[NSURL URLWithString:gifUrl] placeholderImage:nil options:SDWebImageProgressiveDownload];
     //[self.sdImageView sd_cancelCurrentImageLoad];
 }
 

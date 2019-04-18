@@ -2,7 +2,7 @@
 //  JImageDownloadOperation.m
 //  JImage
 //
-//  Created by 刘强 on 2019/4/6.
+//  Created by jams on 2019/4/6.
 //  Copyright © 2019 jams. All rights reserved.
 //
 
